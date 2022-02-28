@@ -1,0 +1,44 @@
+{
+  "type": "object",
+  "properties": {
+    "g": {
+      "type": "number"
+    },
+    "bodies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "position": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "velocity": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "mass": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "position",
+          "velocity",
+          "mass"
+        ]
+      }
+    }
+  },
+  "required": [
+    "g",
+    "bodies"
+  ]
+}
