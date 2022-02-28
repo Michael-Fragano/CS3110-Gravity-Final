@@ -1,3 +1,4 @@
+open Yojson.Basic.Util
 
 type position = {
   x : float;
@@ -19,4 +20,19 @@ type system = {
   g: float;
   bodies: body list;
 }
+
+
+
+let from_json json =
+ {
+   
+ }
+  
+let move b =
+  raise (Failure "Unimplemented: Gravity.move")
+
+
+
+let rec frame s : system = 
+  raise (Failure "Unimplemented: Gravity.frame")
 
