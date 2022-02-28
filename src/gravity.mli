@@ -16,6 +16,10 @@ val from_json : Yojson.Basic.t -> system
 (** [from_json s] is the system that [s] represents. Requires: [s] is a
     valid JSON system representation*)
 
+val g_const : system -> float
+(** [g_const s] returns the value of the gravitational constant of
+    system [s]*)
+
 val dist_sq : body -> body -> float
 (** [dist_sq a b] is the square of the distance between two bodies [a]
     and [b]*)

@@ -45,6 +45,7 @@ let from_json json =
     bodies = List.map body_json (to_list (member "bodies" json));
   }
 
+let g_const s = s.g
 let move b = raise (Failure "Unimplemented: Gravity.move")
 
 let rec frame s : system =
