@@ -20,3 +20,6 @@ type system = {
   bodies: body list;
 }
 
+let rec frame system = 
+  raise (Failure "Unimplemented: Gravity.frame")
+
