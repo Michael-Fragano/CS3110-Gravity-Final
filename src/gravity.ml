@@ -46,6 +46,8 @@ let from_json json =
   }
 
 let g_const s = s.g
+let dist_sq a b = raise (Failure "Unimplemented: Gravity.dist_sq")
+let grav_field s b = raise (Failure "Unimplemented: Gravity.grav_field")
 let move b = raise (Failure "Unimplemented: Gravity.move")
 
 let rec frame s : system =
