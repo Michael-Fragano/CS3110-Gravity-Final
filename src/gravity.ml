@@ -22,13 +22,20 @@ type system = {
 }
 
 (*helper functions for from_json*)
-let pos_json p : position = { x = hd p; y = tl p }
-let vel_json v : velocity = { x = hd v; y = tl v }
+let pos_json p : position =
+  match p with
+  | [ h; t ] -> { x = to_float h; y = to_float t }
+  | _ -> raise (Failure "Does not contain two floats")
+
+let vel_json v : velocity =
+  match v with
+  | [ h; t ] -> { x = to_float h; y = to_float t }
+  | _ -> raise (Failure "Does not contain two floats")
 
 let body_json j =
   {
-    pos = pos_json (member "position" j);
-    vel = vel_json (member "velocity" j);
+    pos = pos_json (to_list (member "position" j));
+    vel = vel_json (to_list (member "velocity" j));
     mass = to_float (member "mass" j);
   }
 
