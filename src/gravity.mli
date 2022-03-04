@@ -28,6 +28,9 @@ val grav_field : system -> body -> float
 (** [grav_field s b] is the total gravitational field experienced by [b]
     in [s] from the other bodies in [s]*)
 
+val bodies : system -> body list
+(** [bodies s] returns a list of the bodies in system [s]*)
+
 val move : system -> body -> body
 (** [move b] takes a body and determines what its new position is after
     one frame*)
