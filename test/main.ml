@@ -13,9 +13,14 @@ let gravity_tests =
   [
     ( "Gravitational Constant" >:: fun t ->
       assert_equal 0.05 (g_const tsys) );
-    ( "Gravitational Field x component" >:: fun t ->
-      assert_equal 0.08
-        (gx (grav_field tsys (bodies_ex b (List.hd b)) (List.hd b))) );
+    ( "Gravitational Field x component greater than" >:: fun t ->
+      assert_equal true
+        (gx (grav_field tsys (bodies_ex b (List.hd b)) (List.hd b))
+        > 0.079) );
+    ( "Gravitational Field x component less than" >:: fun t ->
+      assert_equal true
+        (gx (grav_field tsys (bodies_ex b (List.hd b)) (List.hd b))
+        < 0.081) );
     ( "Gravitational Field y component" >:: fun t ->
       assert_equal ~-.0.06
         (gy (grav_field tsys (bodies_ex b (List.hd b)) (List.hd b))) );
