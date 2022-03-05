@@ -55,11 +55,15 @@ let make_g g : g_field =
   | [ h; t ] -> { x = h; y = t }
   | _ -> raise (Failure "Does not contain two floats")
 
-let g_const s = s.g
+(**Helper Functions:*)
 
-let bodies_ex s b =
-  let bodies = s.bodies in
-  List.filter b bodies
+let g_const s = s.g
+let bods s = s.bodies
+
+let rec bodies_ex bds (b : body) =
+  match bds with
+  | h :: t -> if h = b then t else bodies_ex t b
+  | _ -> raise (Failure "Does not contain selected body")
 
 let x_dist a b = b.pos.x -. a.pos.x
 let y_dist a b = b.pos.y -. a.pos.y
@@ -69,7 +73,11 @@ let dist a b =
   let y = y_dist a b in
   sqrt ((x *. x) +. (y *. y))
 
-let grav_force g a b = g *. (a.mass *. b.mass /. dist a b)
+let grav_force g a b = g *. (a.mass *. b.mass /. (dist a b *. dist a b))
+let gx g = g.x
+let gy g = g.y
+
+(**Main Functions:*)
 
 let rec grav_field s (others : body list) (b : body) =
   let g = g_const s in
@@ -79,16 +87,16 @@ let rec grav_field s (others : body list) (b : body) =
       let grav = grav_force g b h in
       make_g
         [
-          grav *. (y_dist b h /. dist b h);
           grav *. (x_dist b h /. dist b h);
+          grav *. (y_dist b h /. dist b h);
         ]
   | h :: t ->
       let grav = grav_force g b h in
       let field = grav_field s t b in
       make_g
         [
-          (grav *. (y_dist b h /. dist b h)) +. field.x;
-          (grav *. (x_dist b h /. dist b h)) +. field.y;
+          (grav *. (x_dist b h /. dist b h)) +. field.x;
+          (grav *. (y_dist b h /. dist b h)) +. field.y;
         ]
 
 let move b = raise (Failure "Unimplemented: Gravity.move")

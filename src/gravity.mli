@@ -15,18 +15,21 @@ type system
 type g_field
 (** The gravitational forces acting on a body*)
 
+(**HELPER FUNCTIONS*)
 val from_json : Yojson.Basic.t -> system
 (** [from_json s] is the system that [s] represents. Requires: [s] is a
     valid JSON system representation*)
 
-val make_g : float * float -> g_field
+val make_g : float list -> g_field
 (** [make_g g] creates a g_field from float list of two floats [g]*)
 
 val g_const : system -> float
 (** [g_const s] returns the value of the gravitational constant of
     system [s]*)
 
-val bodies_ex : system -> body -> body list
+val bods : system -> body list
+
+val bodies_ex : body list -> body -> body list
 (** [bodies s b] returns a list of the bodies in system [s], excluding
     body [b]*)
 
@@ -38,12 +41,20 @@ val y_dist : body -> body -> float
 (** [y_dist a b] returns the y component of the distance of body [b]
     from body [a]*)
 
-val dist_sq : body -> body -> float
+val dist : body -> body -> float
 (** [dist_sq a b] is the the distance between two bodies [a] and [b]*)
 
 val grav_force : float -> body -> body -> float
 (** [grav_force g a b] returns the gravitational force felt between
     bodies [a] and [b], with gravitaitonal constant [g]*)
+
+val gx : g_field -> float
+(**[gx g] returns x component of g_field [g]*)
+
+val gy : g_field -> float
+(**[gy g] returns y component of g_field [g]*)
+
+(**MAIN FUNCTIIONS*)
 
 val grav_field : system -> body list -> body -> g_field
 (** [grav_field s o b] is the total gravitational field experienced by
