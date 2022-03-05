@@ -8,8 +8,6 @@ let x = gx (grav_field tsys (bodies_ex b (List.hd b)) (List.hd b))
 let y = gy (grav_field tsys (bodies_ex b (List.hd b)) (List.hd b))
 
 let gravity_tests =
-  print_float x;
-  print_float y;
   [
     ( "Gravitational Constant" >:: fun t ->
       assert_equal 0.05 (g_const tsys) );
