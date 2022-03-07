@@ -15,13 +15,30 @@ type system
 type g_field
 (** The gravitational forces acting on a body*)
 
-(**HELPER FUNCTIONS*)
 val from_json : Yojson.Basic.t -> system
 (** [from_json s] is the system that [s] represents. Requires: [s] is a
     valid JSON system representation*)
 
-val make_g : float list -> g_field
-(** [make_g g] creates a g_field from float list of two floats [g]*)
+val make_g : float -> float -> g_field
+(** [make_g h v] creates a g_field from two floats [h](horizontal) and
+    [v](vertical)*)
+
+val make_v : float -> float -> velocity
+(** [make_v v] creates a new velocity from two floats [h](horizontal)
+    and [v](vertical)*)
+
+val make_b : position -> velocity -> float -> body
+(** [make_b p v m] creates a new body from position [p], velocity [v]
+    and mass [m]*)
+
+val make_p : float -> float -> position
+(** [make_p h v] creates a new velocity from two floats [h](horizontal)
+    and [v](vertical)*)
+
+(**HELPER FUNCTIONS*)
+
+val timestep : system -> float
+(** [timestep s] returns the value of dt of system [s]*)
 
 val g_const : system -> float
 (** [g_const s] returns the value of the gravitational constant of
@@ -49,10 +66,19 @@ val grav_force : float -> body -> body -> float
     bodies [a] and [b], with gravitaitonal constant [g]*)
 
 val gx : g_field -> float
-(**[gx g] returns x component of g_field [g]*)
+(** [gx g] returns x component of g_field [g]*)
 
 val gy : g_field -> float
-(**[gy g] returns y component of g_field [g]*)
+(** [gy g] returns y component of g_field [g]*)
+
+val acc : float -> float -> float
+(** [acc f m ] returns the acceleration of a force [f] and a mass [m]*)
+
+val x_pos : body -> float
+(** [x_pos b] returns the x position of body [b]*)
+
+val y_pos : body -> float
+(** [y_pos b] returns the y position of body [b]*)
 
 (**MAIN FUNCTIIONS*)
 
@@ -60,9 +86,14 @@ val grav_field : system -> body list -> body -> g_field
 (** [grav_field s o b] is the total gravitational field experienced by
     [b] in [s] from the other bodies [o]*)
 
+val new_v : body -> g_field -> float -> velocity
+(** [new_v b g t] takes the velocity of a body [b] and gravitaitonal
+    forces [g] applied to it to calculate the new velocity felt after
+    [t] seconds of acceleration.*)
+
 val move : system -> body -> body
-(** [move b] takes a body and determines what its new position is after
-    one frame*)
+(** [move s b] takes a body [b] of system [s] and determines what its
+    new position is after one frame*)
 
 val frame : system -> system
 (** [frame s] takes the currenty system and runs what will happen to all

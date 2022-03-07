@@ -1,6 +1,9 @@
 {
   "type": "object",
   "properties": {
+    "dt": {
+      "type": "number"
+    },
     "g": {
       "type": "number"
     },
@@ -38,6 +41,7 @@
     }
   },
   "required": [
+    "dt",
     "g",
     "bodies"
   ]
