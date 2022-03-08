@@ -56,6 +56,7 @@ let make_g h v : g_field = { x = h; y = v }
 let make_v h v : velocity = { x = h; y = v }
 let make_b p v m : body = { pos = p; vel = v; mass = m }
 let make_p h v : position = { x = h; y = v }
+let make_s t gr b : system = { dt = t; g = gr; bodies = b }
 
 (**Helper Functions:*)
 
@@ -112,5 +113,18 @@ let move s b =
     (make_p (b.pos.x +. (v.x *. s.dt)) (b.pos.y +. (v.y *. s.dt)))
     v b.mass
 
-let rec frame s : system =
-  raise (Failure "Unimplemented: Gravity.frame")
+(**temporary way to control how mant frames this runs for*)
+let frame_count = 100
+
+let rec frame s f : system =
+  if f > 0 then
+    let rec new_bodies g =
+      match g with
+      | [] -> []
+      | [ h ] -> [ move s h ]
+      | h :: t -> [ move s h ] @ new_bodies t
+    in
+    let new_s = make_s s.dt s.g (new_bodies s.bodies) in
+    (**Insert sending data to graphics here*)
+    frame new_s (f - 1)
+  else s
