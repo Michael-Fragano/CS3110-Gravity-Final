@@ -52,6 +52,9 @@ let from_json json =
     bodies = List.map body_json (to_list (member "bodies" json));
   }
 
+
+
+(**Functions for making systems and g_fields*)
 let make_g h v : g_field = { x = h; y = v }
 let make_v h v : velocity = { x = h; y = v }
 let make_b p v m : body = { pos = p; vel = v; mass = m }
