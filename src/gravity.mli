@@ -35,6 +35,10 @@ val make_p : float -> float -> position
 (** [make_p h v] creates a new velocity from two floats [h](horizontal)
     and [v](vertical)*)
 
+val make_s : float -> float -> body list -> system
+(** [make_s t gr b] creates a new system from dt [t], gravitational
+    constant [gr], and body list [b]*)
+
 (**HELPER FUNCTIONS*)
 
 val timestep : system -> float
@@ -95,6 +99,6 @@ val move : system -> body -> body
 (** [move s b] takes a body [b] of system [s] and determines what its
     new position is after one frame*)
 
-val frame : system -> system
-(** [frame s] takes the currenty system and runs what will happen to all
-    the bodies in it after one frame of simulaiton. *)
+val frame : system -> int -> system
+(** [frame s f] takes the current system and runs what will happen to
+    all the bodies in it after one [f] frames of simulaiton. *)
