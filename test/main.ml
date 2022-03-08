@@ -7,8 +7,23 @@ let b = bods tsys
 let bod = List.hd b
 let x = gx (grav_field tsys (bodies_ex b bod) bod)
 let y = gy (grav_field tsys (bodies_ex b bod) bod)
+let tsysfin = frame tsys 100
+let bfin = bods tsysfin
+let bodfin = List.hd bfin
 
 let gravity_tests =
+  print_endline "X before: ";
+  print_float (x_pos bod);
+  print_endline " ";
+  print_endline "Y before: ";
+  print_float (y_pos bod);
+  print_endline " ";
+  print_endline "X after: ";
+  print_float (x_pos bodfin);
+  print_endline " ";
+  print_endline "Y after: ";
+  print_float (y_pos bodfin);
+  print_endline " ";
   [
     ("dt" >:: fun t -> assert_equal 0.01 (timestep tsys));
     ( "Gravitational Constant" >:: fun t ->
