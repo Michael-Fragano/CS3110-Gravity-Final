@@ -1,7 +1,9 @@
 open OUnit2
 open Gravity
 
+(** test_system.json*)
 let tst = Yojson.Basic.from_file "data/test_system.json"
+
 let tsys = from_json tst
 let b = bods tsys
 let bod = List.hd b
@@ -11,19 +13,48 @@ let tsysfin = frame tsys 100
 let bfin = bods tsysfin
 let bodfin = List.hd bfin
 
+(** binary.json*)
+
+let bin = Yojson.Basic.from_file "data/binary.json"
+let bsys = from_json bin
+let bb = bods bsys
+let bbod = List.hd bb
+let tail = List.tl bb
+let obod = List.hd tail
+let bsysfin = frame bsys 15707
+let bbfin = bods bsysfin
+let bbodfin = List.hd bbfin
+let tailfin = List.tl bbfin
+let obodfin = List.hd tailfin
+
 let gravity_tests =
   print_endline "X before: ";
-  print_float (x_pos bod);
+  print_float (x_pos bbod);
   print_endline " ";
   print_endline "Y before: ";
-  print_float (y_pos bod);
+  print_float (y_pos bbod);
   print_endline " ";
   print_endline "X after: ";
-  print_float (x_pos bodfin);
+  print_float (x_pos bbodfin);
   print_endline " ";
   print_endline "Y after: ";
-  print_float (y_pos bodfin);
+  print_float (y_pos bbodfin);
   print_endline " ";
+  print_endline " ";
+
+  print_endline "X before: ";
+  print_float (x_pos obod);
+  print_endline " ";
+  print_endline "Y before: ";
+  print_float (y_pos obod);
+  print_endline " ";
+  print_endline "X after: ";
+  print_float (x_pos obodfin);
+  print_endline " ";
+  print_endline "Y after: ";
+  print_float (y_pos obodfin);
+  print_endline " ";
+
   [
     ("dt" >:: fun t -> assert_equal 0.01 (timestep tsys));
     ( "Gravitational Constant" >:: fun t ->

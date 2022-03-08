@@ -66,7 +66,7 @@ let bods s = s.bodies
 
 let rec bodies_ex bds (b : body) =
   match bds with
-  | h :: t -> if h = b then t else bodies_ex t b
+  | h :: t -> if h = b then t else [h] @ bodies_ex t b
   | _ -> raise (Failure "Does not contain selected body")
 
 let x_dist a b = b.pos.x -. a.pos.x
