@@ -113,7 +113,7 @@ let move s b =
     (make_p (b.pos.x +. (v.x *. s.dt)) (b.pos.y +. (v.y *. s.dt)))
     v b.mass
 
-(**temporary way to control how mant frames this runs for*)
+(**temporary way to control how many frames this runs for*)
 let frame_count = 100
 
 let rec frame s f : system =
