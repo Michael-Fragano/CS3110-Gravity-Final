@@ -17,9 +17,9 @@ let rec draw_bodies color = function
   | h :: t ->
       set_color color;
       fill_circle
-        ((h |> Gravity.x_pos |> Float.floor |> int_of_float)
+        ((h |> Gravity.x_pos |> ( *. ) 5. |> Float.floor |> int_of_float)
         + (size_x () / 2))
-        ((h |> Gravity.y_pos |> Float.floor |> int_of_float)
+        ((h |> Gravity.y_pos |> ( *. ) 5. |> Float.floor |> int_of_float)
         + (size_y () / 2))
         10;
       draw_bodies color t
@@ -31,18 +31,23 @@ let render system status =
   synchronize ();
   clear_system system
 
-let fps : float = 60.
+let seconds_per_frame : float = 1. /. 60.
 
 let update system : Gravity.system =
   Gravity.frame system
-    (int_of_float (1. /. Gravity.timestep system /. fps))
+    (int_of_float (seconds_per_frame /. Gravity.timestep system))
+(* <- gives ticks per frame*)
 
 let get_status () = wait_next_event [ Poll ]
 
-let rec main_loop system status : unit =
+let rec main_loop system status time : unit =
   render system status;
-  main_loop (update system) status
-(*get_status ()*)
+  let new_system = update system in
+  let new_status = status (*get_status eventually*) in
+  let new_time = Unix.gettimeofday () in
+  let time_left = seconds_per_frame -. new_time +. time in
+  if time_left > 0. then Unix.sleepf time_left;
+  main_loop new_system new_status new_time
 
 let start_window () =
   init ();
@@ -54,4 +59,4 @@ let start_window_preset json =
     |> Yojson.Basic.from_file |> Gravity.from_json
   in
   init ();
-  main_loop system (get_status ())
+  main_loop system (get_status ()) (Unix.gettimeofday ())
