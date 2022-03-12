@@ -102,3 +102,7 @@ val move : system -> body -> body
 val frame : system -> int -> system
 (** [frame s f] takes the current system and runs what will happen to
     all the bodies in it after one [f] frames of simulaiton. *)
+
+val print_to_screen : system -> int -> float -> float
+(** [print_to_screen s t f] prints a graphic of simulation [s] running
+    for [t] seconds. at [fps] frames per second*)

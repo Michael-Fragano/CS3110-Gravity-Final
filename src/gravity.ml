@@ -125,6 +125,20 @@ let rec frame s f : system =
       | h :: t -> [ move s h ] @ new_bodies t
     in
     let new_s = make_s s.dt s.g (new_bodies s.bodies) in
-    (**Insert sending data to graphics here*)
     frame new_s (f - 1)
   else s
+
+let rec print_to_screen s t fps =
+  let frames = 1.0 /. s.dt /. fps
+in if t > 0 then 
+  let rec second f =
+    if f > 0.0 then
+    (** print to screen positions of bodies after running [frame s frames]*)
+    (**wait 1.0 /.fps seconds*)
+    second f -. 1.0
+    else 0.0
+  in second fps
+else 0.0
+     
+
+  
