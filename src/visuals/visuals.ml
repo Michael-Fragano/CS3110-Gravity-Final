@@ -12,24 +12,31 @@ let rec draw_coords status =
     (Printf.sprintf "x : %n, y : %n" status.mouse_x status.mouse_y);
   draw_coords (wait_next_event [ Mouse_motion ])
 
-let render system status =
-  let rec render_bodies = function
-    | [] -> ()
-    | h :: t ->
-        set_color cyan;
-        fill_circle
-          (((h |> Gravity.x_pos |> Float.floor |> int_of_float) * 5)
-          + (size_x () / 2))
-          (((h |> Gravity.y_pos |> Float.floor |> int_of_float) * 5)
-          + (size_y () / 2))
-          10;
-        render_bodies t
-  in
-  clear_graph ();
-  render_bodies (Gravity.bods system);
-  synchronize ()
+let rec draw_bodies color = function
+  | [] -> ()
+  | h :: t ->
+      set_color color;
+      fill_circle
+        ((h |> Gravity.x_pos |> Float.floor |> int_of_float)
+        + (size_x () / 2))
+        ((h |> Gravity.y_pos |> Float.floor |> int_of_float)
+        + (size_y () / 2))
+        10;
+      draw_bodies color t
 
-let update system : Gravity.system = Gravity.frame system 1
+let clear_system system = draw_bodies background (Gravity.bods system)
+
+let render system status =
+  draw_bodies cyan (Gravity.bods system);
+  synchronize ();
+  clear_system system
+
+let fps : float = 60.
+
+let update system : Gravity.system =
+  Gravity.frame system
+    (int_of_float (1. /. Gravity.timestep system /. fps))
+
 let get_status () = wait_next_event [ Poll ]
 
 let rec main_loop system status : unit =
