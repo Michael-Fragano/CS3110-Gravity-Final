@@ -1,0 +1,4 @@
+(library
+ (name visuals)
+ (public_name Visuals)
+ (libraries graphics gravity))
