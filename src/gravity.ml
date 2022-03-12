@@ -52,10 +52,9 @@ let from_json json =
     bodies = List.map body_json (to_list (member "bodies" json));
   }
 
-
-
 (**Functions for making systems and g_fields*)
 let make_g h v : g_field = { x = h; y = v }
+
 let make_v h v : velocity = { x = h; y = v }
 let make_b p v m : body = { pos = p; vel = v; mass = m }
 let make_p h v : position = { x = h; y = v }
@@ -69,7 +68,7 @@ let bods s = s.bodies
 
 let rec bodies_ex bds (b : body) =
   match bds with
-  | h :: t -> if h = b then t else [h] @ bodies_ex t b
+  | h :: t -> if h = b then t else [ h ] @ bodies_ex t b
   | _ -> raise (Failure "Does not contain selected body")
 
 let x_dist a b = b.pos.x -. a.pos.x
@@ -127,18 +126,3 @@ let rec frame s f : system =
     let new_s = make_s s.dt s.g (new_bodies s.bodies) in
     frame new_s (f - 1)
   else s
-
-let rec print_to_screen s t fps =
-  let frames = 1.0 /. s.dt /. fps
-in if t > 0 then 
-  let rec second f =
-    if f > 0.0 then
-    (** print to screen positions of bodies after running [frame s frames]*)
-    (**wait 1.0 /.fps seconds*)
-    second f -. 1.0
-    else 0.0
-  in second fps
-else 0.0
-     
-
-  
