@@ -12,22 +12,23 @@ let rec draw_coords status =
     (Printf.sprintf "x : %n, y : %n" status.mouse_x status.mouse_y);
   draw_coords (wait_next_event [ Mouse_motion ])
 
-let rec draw_bodies color = function
+let rec draw_bodies clear = function
   | [] -> ()
   | h :: t ->
-      set_color color;
+      if clear then set_color background
+      else set_color (Gravity.color h);
       fill_circle
-        ((h |> Gravity.x_pos |> ( *. ) 5. |> Float.floor |> int_of_float)
+        ((h |> Gravity.x_pos |> Float.floor |> int_of_float)
         + (size_x () / 2))
-        ((h |> Gravity.y_pos |> ( *. ) 5. |> Float.floor |> int_of_float)
+        ((h |> Gravity.y_pos |> Float.floor |> int_of_float)
         + (size_y () / 2))
         10;
-      draw_bodies color t
+      draw_bodies clear t
 
-let clear_system system = draw_bodies background (Gravity.bods system)
+let clear_system system = draw_bodies true (Gravity.bods system)
 
 let render system status =
-  draw_bodies cyan (Gravity.bods system);
+  draw_bodies false (Gravity.bods system);
   synchronize ();
   clear_system system
 

@@ -27,7 +27,7 @@ val make_v : float -> float -> velocity
 (** [make_v v] creates a new velocity from two floats [h](horizontal)
     and [v](vertical)*)
 
-val make_b : position -> velocity -> float -> body
+val make_b : position -> velocity -> float -> int -> body
 (** [make_b p v m] creates a new body from position [p], velocity [v]
     and mass [m]*)
 
@@ -83,6 +83,8 @@ val x_pos : body -> float
 
 val y_pos : body -> float
 (** [y_pos b] returns the y position of body [b]*)
+val color : body -> int
+(** [color b] returns the color of body [b] in RGB format*)
 
 (**MAIN FUNCTIIONS*)
 

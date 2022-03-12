@@ -14,6 +14,7 @@ type body = {
   pos : position;
   vel : velocity;
   mass : float;
+  color : int;
 }
 
 type system = {
@@ -43,6 +44,7 @@ let body_json j =
     pos = pos_json (to_list (member "position" j));
     vel = vel_json (to_list (member "velocity" j));
     mass = to_float (member "mass" j);
+    color = int_of_string (to_string (member "color" j));
   }
 
 let from_json json =
@@ -56,7 +58,7 @@ let from_json json =
 let make_g h v : g_field = { x = h; y = v }
 
 let make_v h v : velocity = { x = h; y = v }
-let make_b p v m : body = { pos = p; vel = v; mass = m }
+let make_b p v m c : body = { pos = p; vel = v; mass = m; color = c }
 let make_p h v : position = { x = h; y = v }
 let make_s t gr b : system = { dt = t; g = gr; bodies = b }
 
@@ -85,6 +87,7 @@ let gy g = g.y
 let acc f m = f /. m
 let x_pos b = b.pos.x
 let y_pos b = b.pos.y
+let color b = b.color
 
 (**Main Functions:*)
 
@@ -113,7 +116,7 @@ let move s b =
   let v = new_v b (grav_field s (bodies_ex s.bodies b) b) s.dt in
   make_b
     (make_p (b.pos.x +. (v.x *. s.dt)) (b.pos.y +. (v.y *. s.dt)))
-    v b.mass
+    v b.mass b.color
 
 let rec frame s f : system =
   if f > 0 then

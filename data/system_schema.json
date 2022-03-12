@@ -30,12 +30,16 @@
           },
           "mass": {
             "type": "number"
+          },
+          "color": {
+            "type": "string"
           }
         },
         "required": [
           "position",
           "velocity",
-          "mass"
+          "mass",
+          "color"
         ]
       }
     }
