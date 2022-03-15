@@ -59,5 +59,8 @@ let start_window_preset json =
     "data/" ^ json ^ ".json"
     |> Yojson.Basic.from_file |> Gravity.from_json
   in
-  init ();
-  main_loop system (get_status ()) (Unix.gettimeofday ())
+  try
+    init ();
+    main_loop system (get_status ()) (Unix.gettimeofday ())
+  with Graphics.Graphic_failure "fatal I/O error" ->
+    Graphics.close_graph ()
