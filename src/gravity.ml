@@ -118,6 +118,23 @@ let move s b =
     (make_p (b.pos.x +. (v.x *. s.dt)) (b.pos.y +. (v.y *. s.dt)))
     v b.mass b.color
 
+let rec collide others b =
+  match others with
+  | [] -> [ b ]
+  | [ h ] -> if dist h b < 5.0 then [] else [ h ]
+  | h :: t ->
+      if dist h b < 5.0 then collide t b else [ h ] @ collide t b
+
+let collision_check s =
+  let b = s.bodies in
+  let rec collides bds =
+    match bds with
+    | [] -> []
+    | [ h ] -> [ h ]
+    | h :: t -> [ h ] @ collides (collide t h)
+  in
+  make_s s.dt s.g (collides b)
+
 let rec frame s f : system =
   if f > 0 then
     let rec new_bodies g =
@@ -127,5 +144,6 @@ let rec frame s f : system =
       | h :: t -> [ move s h ] @ new_bodies t
     in
     let new_s = make_s s.dt s.g (new_bodies s.bodies) in
-    frame new_s (f - 1)
+    let fin_s = collision_check new_s in
+    frame fin_s (f - 1)
   else s

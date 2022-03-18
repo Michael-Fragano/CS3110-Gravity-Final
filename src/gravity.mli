@@ -101,6 +101,15 @@ val move : system -> body -> body
 (** [move s b] takes a body [b] of system [s] and determines what its
     new position is after one frame*)
 
+val collide : body list -> body -> body list
+(** [collide others b] takes a body [b] and determines what bodies of body list 
+[others] are within 5 meters of it, and returns a list of [others] minus these 
+bodies.*)
+
+val collision_check : system -> system
+(** [collision_check s] takes system [s] and removes one any bodies that are 
+within 5 meters of another body.*)
+
 val frame : system -> int -> system
 (** [frame s f] takes the current system and runs what will happen to
     all the bodies in it after one [f] frames of simulaiton. *)
