@@ -27,28 +27,39 @@ let rec draw_bodies clear = function
 
 let clear_system system = draw_bodies true (Gravity.bods system)
 
-let render system status =
+let render
+    (camera : Camera.t)
+    (system : Gravity.system)
+    (status : Status.t) : unit =
   draw_bodies false (Gravity.bods system);
   synchronize ();
   clear_system system
 
 let seconds_per_frame : float = 1. /. 60.
 
-let update system : Gravity.system =
+let update (system : Gravity.system) (status : Status.t) :
+    Gravity.system =
   Gravity.frame system
     (int_of_float (seconds_per_frame /. Gravity.timestep system))
 (* <- gives ticks per frame*)
 
+let adjust
+    (camera : Camera.t)
+    (system : Gravity.system)
+    (status : Status.t) : Camera.t =
+  camera
+
 let get_status () = wait_next_event [ Poll ]
 
-let rec main_loop system status time : unit =
-  render system status;
-  let new_system = update system in
+let rec main_loop camera system status time : unit =
+  render camera system status;
   let new_status = status (*get_status eventually*) in
+  let new_system = update system status in
+  let new_camera = adjust camera system status in
   let new_time = Unix.gettimeofday () in
   let time_left = seconds_per_frame -. new_time +. time in
   if time_left > 0. then Unix.sleepf time_left;
-  main_loop new_system new_status new_time
+  main_loop new_camera new_system new_status new_time
 
 let start_window () =
   init ();
@@ -61,6 +72,7 @@ let start_window_preset json =
   in
   try
     init ();
-    main_loop system (get_status ()) (Unix.gettimeofday ())
+    main_loop Camera.default system (Status.default ())
+      (Unix.gettimeofday ())
   with Graphics.Graphic_failure "fatal I/O error" ->
     Graphics.close_graph ()
