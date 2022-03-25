@@ -28,8 +28,10 @@ let set_pos (dx : float) (dy : float) (cam : t) : t =
 let move (dx : float) (dy : float) (cam : t) : t =
   set_pos (cam.dx +. dx) (cam.dy +. dy) cam
 
-let to_window_indiv (cam : t) (x : float) : int =
-  int_of_float @@ ((x -. cam.dx) /. cam.sx)
+let center ((x, y) : int * int) : int * int =
+  (x + (Graphics.size_x () / 2), y + (Graphics.size_y () / 2))
 
-let to_window (cam : t) ((x, y) : float * float) : int * int =
-  (to_window_indiv cam x, to_window_indiv cam y)
+let to_window (cam : t) (x : float) (y : float) : int * int =
+  center
+    ( int_of_float @@ ((x -. cam.dx) /. cam.sx),
+      int_of_float @@ ((y -. cam.dy) /. cam.sy) )

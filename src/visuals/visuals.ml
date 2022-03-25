@@ -12,28 +12,28 @@ let rec draw_coords status =
     (Printf.sprintf "x : %n, y : %n" status.mouse_x status.mouse_y);
   draw_coords (wait_next_event [ Mouse_motion ])
 
-let rec draw_bodies clear = function
+let rec draw_bodies camera clear = function
   | [] -> ()
-  | h :: t ->
+  | h :: t -> (
       if clear then set_color background
       else set_color (Gravity.color h);
-      fill_circle
-        ((h |> Gravity.x_pos |> Float.floor |> int_of_float)
-        + (size_x () / 2))
-        ((h |> Gravity.y_pos |> Float.floor |> int_of_float)
-        + (size_y () / 2))
-        10;
-      draw_bodies clear t
+      match
+        Camera.to_window camera (Gravity.x_pos h) (Gravity.y_pos h)
+      with
+      | x, y ->
+          fill_circle x y 10;
+          draw_bodies camera clear t)
 
-let clear_system system = draw_bodies true (Gravity.bods system)
+let clear_system camera system =
+  draw_bodies camera true (Gravity.bods system)
 
 let render
     (camera : Camera.t)
     (system : Gravity.system)
     (status : Status.t) : unit =
-  draw_bodies false (Gravity.bods system);
+  draw_bodies camera false (Gravity.bods system);
   synchronize ();
-  clear_system system
+  clear_system camera system
 
 let seconds_per_frame : float = 1. /. 60.
 
@@ -47,7 +47,12 @@ let adjust
     (camera : Camera.t)
     (system : Gravity.system)
     (status : Status.t) : Camera.t =
-  camera
+  match status.camera_focus with
+  | Camera.Origin -> Camera.set_pos 0.0 0.0 camera
+  | Camera.Body n ->
+      let b = system |> Gravity.bods |> fun lst -> List.nth lst n in
+      Camera.set_pos (Gravity.x_pos b) (Gravity.y_pos b) camera
+  | _ -> camera
 
 let get_status () = wait_next_event [ Poll ]
 
