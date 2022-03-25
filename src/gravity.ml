@@ -118,12 +118,42 @@ let move s b =
     (make_p (b.pos.x +. (v.x *. s.dt)) (b.pos.y +. (v.y *. s.dt)))
     v b.mass b.color
 
-let rec collide others b =
+let inel_col m1 m2 : velocity =
+  {
+    x =
+      ((m1.mass *. m1.vel.x) +. (m2.mass *. m2.vel.x))
+      /. (m1.mass +. m2.mass);
+    y =
+      ((m1.mass *. m1.vel.y) +. (m2.mass *. m2.vel.y))
+      /. (m1.mass +. m2.mass);
+  }
+
+let collide b1 b2 : body =
+  {
+    pos = make_p b1.pos.x b1.pos.y;
+    vel = inel_col b1 b2;
+    mass = b1.mass +. b2.mass;
+    color = b1.color;
+  }
+
+let within_range b1 b2 = if dist b1 b2 < 1.0 then true else false
+
+let rec collidee others b =
   match others with
-  | [] -> [ b ]
-  | [ h ] -> if dist h b < 5.0 then [] else [ h ]
+  | [] -> []
+  | [ h ] -> if within_range h b then [] else [ h ]
   | h :: t ->
-      if dist h b < 5.0 then collide t b else [ h ] @ collide t b
+      if within_range h b then collidee t b else h :: collidee t b
+
+let rec collisior others b =
+  match others with
+  | [] -> b
+  | [ h ] -> if within_range h b then collide b h else b
+  | h :: t ->
+      if within_range b h then
+        let nb = collide b h in
+        collisior t nb
+      else collisior t b
 
 let collision_check s =
   let b = s.bodies in
@@ -131,7 +161,7 @@ let collision_check s =
     match bds with
     | [] -> []
     | [ h ] -> [ h ]
-    | h :: t -> [ h ] @ collides (collide t h)
+    | h :: t -> collisior t h :: collides (collidee t h)
   in
   make_s s.dt s.g (collides b)
 

@@ -101,10 +101,8 @@ val move : system -> body -> body
 (** [move s b] takes a body [b] of system [s] and determines what its
     new position is after one frame*)
 
-val collide : body list -> body -> body list
-(** [collide others b] takes a body [b] and determines what bodies of body list 
-[others] are within 5 meters of it, and returns a list of [others] minus these 
-bodies.*)
+val collide : body  -> body -> body
+(** [collide others b1 b2] takes a bodies [b1] and [b2] and calculates a new body with a position, speed and velocity based on an inelastic collision*)
 
 val collision_check : system -> system
 (** [collision_check s] takes system [s] and removes one any bodies that are 
