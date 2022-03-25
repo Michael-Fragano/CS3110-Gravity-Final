@@ -1,19 +1,28 @@
+type input_state =
+  | Idle
+  | Pressed
+  | Held
+  | Released
+
 type t = {
-  input_status : Graphics.status;
+  mouse_state : input_state;
   camera_focus : Camera.focus;
   paused : bool;
 }
 
 let default () =
-  {
-    input_status = Graphics.wait_next_event [ Poll ];
-    camera_focus = Body 1;
-    paused = false;
-  }
+  { camera_focus = Origin; paused = false; mouse_state = Idle }
+
+let update_mouse = function
+  | Idle -> if Graphics.button_down () then Pressed else Idle
+  | Pressed -> if Graphics.button_down () then Held else Released
+  | Held -> if Graphics.button_down () then Held else Released
+  | Released -> if Graphics.button_down () then Pressed else Idle
 
 let poll_input (status : t) : t =
-  { status with input_status = Graphics.wait_next_event [ Poll ] }
+  { status with mouse_state = update_mouse status.mouse_state }
 
 let change_focus status focus = { status with camera_focus = focus }
 let pause status = { status with paused = true }
 let play status = { status with paused = false }
+let toggle_pause status = { status with paused = not status.paused }

@@ -35,6 +35,10 @@ let render
   synchronize ();
   clear_system camera system
 
+let poll (status : Status.t) : Status.t =
+  status |> Status.poll_input |> fun s ->
+  if s.mouse_state = Pressed then Status.toggle_pause s else s
+
 let seconds_per_frame : float = 1. /. 60.
 
 let update (system : Gravity.system) (status : Status.t) :
@@ -54,12 +58,16 @@ let adjust
       Camera.set_pos (Gravity.x_pos b) (Gravity.y_pos b) camera
   | _ -> camera
 
-let get_status () = wait_next_event [ Poll ]
-
-let rec main_loop camera system status time : unit =
+let rec main_loop
+    (camera : Camera.t)
+    (system : Gravity.system)
+    (status : Status.t)
+    (time : float) : unit =
   render camera system status;
-  let new_status = status (*get_status eventually*) in
-  let new_system = update system status in
+  let new_status = poll status in
+  let new_system =
+    if status.paused then system else update system status
+  in
   let new_camera = adjust camera system status in
   let new_time = Unix.gettimeofday () in
   let time_left = seconds_per_frame -. new_time +. time in
