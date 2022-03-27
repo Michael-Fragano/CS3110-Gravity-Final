@@ -49,6 +49,10 @@ val g_const : system -> float
     system [s]*)
 
 val bods : system -> body list
+(** [bods s] takes a system [s] and returns the list of bodies for that system.*)
+
+val rad : body -> float
+(** [rad b] returns the radius of body [b]*)
 
 val bodies_ex : body list -> body -> body list
 (** [bodies s b] returns a list of the bodies in system [s], excluding

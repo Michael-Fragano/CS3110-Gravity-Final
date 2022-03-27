@@ -21,7 +21,7 @@ let rec draw_bodies camera clear = function
         Camera.to_window camera (Gravity.x_pos h) (Gravity.y_pos h)
       with
       | x, y ->
-          fill_circle x y 10;
+          fill_circle x y (int_of_float (Gravity.rad h));
           draw_bodies camera clear t)
 
 let clear_system camera system =

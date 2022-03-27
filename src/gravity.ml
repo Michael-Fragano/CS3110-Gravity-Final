@@ -15,6 +15,7 @@ type body = {
   vel : velocity;
   mass : float;
   color : int;
+  radius : float;
 }
 
 type system = {
@@ -45,6 +46,7 @@ let body_json j =
     vel = vel_json (to_list (member "velocity" j));
     mass = to_float (member "mass" j);
     color = int_of_string (to_string (member "color" j));
+    radius = sqrt (to_float (member "mass" j));
   }
 
 let from_json json =
@@ -58,7 +60,10 @@ let from_json json =
 let make_g h v : g_field = { x = h; y = v }
 
 let make_v h v : velocity = { x = h; y = v }
-let make_b p v m c : body = { pos = p; vel = v; mass = m; color = c }
+
+let make_b p v m c : body =
+  { pos = p; vel = v; mass = m; color = c; radius = sqrt m }
+
 let make_p h v : position = { x = h; y = v }
 let make_s t gr b : system = { dt = t; g = gr; bodies = b }
 
@@ -67,6 +72,7 @@ let make_s t gr b : system = { dt = t; g = gr; bodies = b }
 let timestep s = s.dt
 let g_const s = s.g
 let bods s = s.bodies
+let rad b = b.radius
 
 let rec bodies_ex bds (b : body) =
   match bds with
@@ -130,13 +136,20 @@ let inel_col m1 m2 : velocity =
 
 let collide b1 b2 : body =
   {
-    pos = make_p b1.pos.x b1.pos.y;
+    pos =
+      make_p
+        (((b1.pos.x *. b1.mass) +. (b2.pos.x *. b2.mass))
+        /. (b1.mass +. b2.mass))
+        (((b1.pos.y *. b1.mass) +. (b2.pos.y *. b2.mass))
+        /. (b1.mass +. b2.mass));
     vel = inel_col b1 b2;
     mass = b1.mass +. b2.mass;
     color = b1.color;
+    radius = sqrt (b1.mass +. b2.mass);
   }
 
-let within_range b1 b2 = if dist b1 b2 < 1.0 then true else false
+let within_range b1 b2 =
+  if dist b1 b2 < b1.radius +. b2.radius then true else false
 
 let rec collidee others b =
   match others with
