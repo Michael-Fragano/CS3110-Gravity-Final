@@ -29,6 +29,14 @@ type g_field = {
   y : float;
 }
 
+(** helper function for cube root*)
+let cbrt f =
+  let rec iter cb =
+    let ncb = ((2.0 *. cb) +. (f /. (cb ** 2.0))) /. 3.0 in
+    if 0.00001 > abs_float (cb -. ncb) then ncb else iter ncb
+  in
+  iter 1.0
+
 (*helper functions for from_json*)
 let pos_json p : position =
   match p with
@@ -46,7 +54,7 @@ let body_json j =
     vel = vel_json (to_list (member "velocity" j));
     mass = to_float (member "mass" j);
     color = int_of_string (to_string (member "color" j));
-    radius = sqrt (to_float (member "mass" j));
+    radius = cbrt (10.0 *. to_float (member "mass" j));
   }
 
 let from_json json =
@@ -62,7 +70,7 @@ let make_g h v : g_field = { x = h; y = v }
 let make_v h v : velocity = { x = h; y = v }
 
 let make_b p v m c : body =
-  { pos = p; vel = v; mass = m; color = c; radius = sqrt m }
+  { pos = p; vel = v; mass = m; color = c; radius = cbrt (10.0 *. m) }
 
 let make_p h v : position = { x = h; y = v }
 let make_s t gr b : system = { dt = t; g = gr; bodies = b }
@@ -145,7 +153,7 @@ let collide b1 b2 : body =
     vel = inel_col b1 b2;
     mass = b1.mass +. b2.mass;
     color = b1.color;
-    radius = sqrt (b1.mass +. b2.mass);
+    radius = cbrt (10.0 *. (b1.mass +. b2.mass));
   }
 
 let within_range b1 b2 =

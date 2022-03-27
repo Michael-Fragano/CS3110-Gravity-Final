@@ -55,9 +55,11 @@ let gravity_tests =
   print_float (y_pos obodfin);
   print_endline " ";
 
+  print_int (color bbod);
   print_endline " ";
 
   [
+    ("cube root" >:: fun t -> assert_equal 5.0 (cbrt 125.0));
     ("dt" >:: fun t -> assert_equal 0.01 (timestep tsys));
     ( "Gravitational Constant" >:: fun t ->
       assert_equal 0.05 (g_const tsys) );

@@ -15,6 +15,9 @@ type system
 type g_field
 (** The gravitational forces acting on a body*)
 
+val cbrt : float -> float
+(** [cbrt f] returns the cube root of float [f].*)
+
 val from_json : Yojson.Basic.t -> system
 (** [from_json s] is the system that [s] represents. Requires: [s] is a
     valid JSON system representation*)
