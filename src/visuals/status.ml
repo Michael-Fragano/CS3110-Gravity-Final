@@ -11,7 +11,7 @@ type t = {
 }
 
 let default () =
-  { camera_focus = Origin; paused = false; mouse_state = Idle }
+  { camera_focus = CenterOfMass; paused = false; mouse_state = Idle }
 
 let update_mouse = function
   | Idle -> if Graphics.button_down () then Pressed else Idle

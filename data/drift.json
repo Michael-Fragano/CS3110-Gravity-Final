@@ -1,0 +1,42 @@
+{
+  "dt": 0.001,
+  "g": 640.0,
+  "bodies": [
+    {
+      "position": [
+        0.0,
+        100.0
+      ],
+      "velocity": [
+        75.0,
+        0.0
+      ],
+      "mass": 100.0,
+      "color": "0x00FF88"
+    },
+    {
+      "position": [
+        0.0,
+        0.0
+      ],
+      "velocity": [
+        0.0,
+        0.0
+      ],
+      "mass": 1000.0,
+      "color": "0xFFFF00"
+    },
+    {
+      "position": [
+        0.0,
+        245.0
+      ],
+      "velocity": [
+        60.0,
+        0.0
+      ],
+      "mass": 50.0,
+      "color": "0xDDDDDD"
+    }
+  ]
+}
