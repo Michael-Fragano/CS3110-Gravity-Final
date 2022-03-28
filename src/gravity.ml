@@ -153,7 +153,7 @@ let collide b1 b2 : body =
         /. (b1.mass +. b2.mass));
     vel = inel_col b1 b2;
     mass = b1.mass +. b2.mass;
-    color = b1.color;
+    color = (if b1.mass >= b2.mass then b1.color else b2.color);
     radius = cbrt (10.0 *. (b1.mass +. b2.mass));
   }
 
