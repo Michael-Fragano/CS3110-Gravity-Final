@@ -56,6 +56,34 @@ let adjust
   | Camera.Body n ->
       let b = system |> Gravity.bods |> fun lst -> List.nth lst n in
       Camera.set_pos (Gravity.x_pos b) (Gravity.y_pos b) camera
+  | CenterOfMass ->
+      let b = Gravity.bods system in
+      let rec bm bods =
+        match bods with
+        | [] -> 0.0
+        | [ n ] -> Gravity.mass n
+        | h :: t -> Gravity.mass h +. bm t
+      in
+      let m = bm b in
+      let cx =
+        let rec bx bods =
+          match bods with
+          | [] -> 0.0
+          | [ n ] -> Gravity.x_pos n *. Gravity.mass n
+          | h :: t -> (Gravity.x_pos h *. Gravity.mass h) +. bx t
+        in
+        if List.length b > 0 then bx b /. m else bx b
+      in
+      let cy =
+        let rec by bods =
+          match bods with
+          | [] -> 0.0
+          | [ n ] -> Gravity.y_pos n *. Gravity.mass n
+          | h :: t -> (Gravity.y_pos h *. Gravity.mass h) +. by t
+        in
+        if List.length b > 0 then by b /. m else by b
+      in
+      Camera.set_pos cx cy camera
   | _ -> camera
 
 let rec main_loop

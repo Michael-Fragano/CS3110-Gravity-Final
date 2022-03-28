@@ -81,6 +81,7 @@ let timestep s = s.dt
 let g_const s = s.g
 let bods s = s.bodies
 let rad b = b.radius
+let mass b = b.mass
 
 let rec bodies_ex bds (b : body) =
   match bds with
