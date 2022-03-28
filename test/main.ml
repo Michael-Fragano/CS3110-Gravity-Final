@@ -28,36 +28,6 @@ let tailfin = List.tl bbfin
 let obodfin = List.hd tailfin
 
 let gravity_tests =
-  print_endline "X before: ";
-  print_float (x_pos bbod);
-  print_endline " ";
-  print_endline "Y before: ";
-  print_float (y_pos bbod);
-  print_endline " ";
-  print_endline "X after: ";
-  print_float (x_pos bbodfin);
-  print_endline " ";
-  print_endline "Y after: ";
-  print_float (y_pos bbodfin);
-  print_endline " ";
-  print_endline " ";
-
-  print_endline "X before: ";
-  print_float (x_pos obod);
-  print_endline " ";
-  print_endline "Y before: ";
-  print_float (y_pos obod);
-  print_endline " ";
-  print_endline "X after: ";
-  print_float (x_pos obodfin);
-  print_endline " ";
-  print_endline "Y after: ";
-  print_float (y_pos obodfin);
-  print_endline " ";
-
-  print_int (color bbod);
-  print_endline " ";
-
   [
     ("cube root" >:: fun t -> assert_equal 5.0 (cbrt 125.0));
     ("dt" >:: fun t -> assert_equal 0.01 (timestep tsys));
