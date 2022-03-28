@@ -12,6 +12,20 @@ let rec draw_coords status =
     (Printf.sprintf "x : %n, y : %n" status.mouse_x status.mouse_y);
   draw_coords (wait_next_event [ Mouse_motion ])
 
+let draw_focus (status : Status.t) =
+  moveto 0 0;
+  set_color background;
+  fill_rect 0 0 (size_x ()) 10;
+  set_color black;
+  let focus_str =
+    match status.camera_focus with
+    | Origin -> "Origin"
+    | Body n -> "Body " ^ string_of_int n
+    | CenterOfMass -> "Center Of Mass"
+    | Free -> "Free"
+  in
+  draw_string (Printf.sprintf "focus : " ^ focus_str)
+
 let rec draw_bodies camera clear = function
   | [] -> ()
   | h :: t -> (
@@ -32,17 +46,21 @@ let render
     (system : Gravity.system)
     (status : Status.t) : unit =
   draw_bodies camera false (Gravity.bods system);
+  draw_focus status;
   synchronize ();
   clear_system camera system
 
-let poll (status : Status.t) : Status.t =
-  status |> Status.poll_input |> fun s ->
-  if s.mouse_state = Pressed then Status.toggle_pause s else s
+let poll (status : Status.t) (system : Gravity.system) : Status.t =
+  status |> Status.poll_input |> Status.update_body_num system
+  |> fun s ->
+  if s.mouse_state = Pressed then Status.toggle_pause s
+  else
+    s |> fun s ->
+    if s.space_state = Pressed then Status.cycle_focus s else s
 
 let seconds_per_frame : float = 1. /. 60.
 
-let update (system : Gravity.system) (status : Status.t) :
-    Gravity.system =
+let update (system : Gravity.system) : Gravity.system =
   Gravity.frame system
     (int_of_float (seconds_per_frame /. Gravity.timestep system))
 (* <- gives ticks per frame*)
@@ -92,11 +110,9 @@ let rec main_loop
     (status : Status.t)
     (time : float) : unit =
   render camera system status;
-  let new_status = poll status in
-  let new_system =
-    if status.paused then system else update system status
-  in
-  let new_camera = adjust camera system status in
+  let new_system = if status.paused then system else update system in
+  let new_status = poll status new_system in
+  let new_camera = adjust camera new_system new_status in
   let new_time = Unix.gettimeofday () in
   let time_left = seconds_per_frame -. new_time +. time in
   if time_left > 0. then Unix.sleepf time_left;
