@@ -24,7 +24,8 @@ let draw_focus (status : Status.t) =
     | CenterOfMass -> "Center Of Mass"
     | Free -> "Free"
   in
-  draw_string (Printf.sprintf "focus : " ^ focus_str)
+  draw_string (Printf.sprintf "focus : " ^ focus_str);
+  draw_string (Printf.sprintf "  speed : %f" status.speed)
 
 let rec draw_bodies camera clear = function
   | [] -> ()
@@ -56,13 +57,22 @@ let poll (status : Status.t) (system : Gravity.system) : Status.t =
   if s.mouse_state = Pressed then Status.toggle_pause s
   else
     s |> fun s ->
-    if s.space_state = Pressed then Status.cycle_focus s else s
+    if s.space_state = Pressed then Status.cycle_focus s
+    else
+      s |> fun s ->
+      if s.l_arrow_state = Pressed then Status.update_speed false s
+      else
+        s |> fun s ->
+        if s.r_arrow_state = Pressed then Status.update_speed true s
+        else s
 
 let seconds_per_frame : float = 1. /. 60.
 
-let update (system : Gravity.system) : Gravity.system =
+let update (system : Gravity.system) (status : Status.t) :
+    Gravity.system =
   Gravity.frame system
-    (int_of_float (seconds_per_frame /. Gravity.timestep system))
+    (int_of_float
+       (seconds_per_frame *. status.speed /. Gravity.timestep system))
 (* <- gives ticks per frame*)
 
 let adjust
@@ -110,7 +120,9 @@ let rec main_loop
     (status : Status.t)
     (time : float) : unit =
   render camera system status;
-  let new_system = if status.paused then system else update system in
+  let new_system =
+    if status.paused then system else update system status
+  in
   let new_status = poll status new_system in
   let new_camera = adjust camera new_system new_status in
   let new_time = Unix.gettimeofday () in
