@@ -52,19 +52,16 @@ let render
   clear_system camera system
 
 let poll (status : Status.t) (system : Gravity.system) : Status.t =
-  status |> Status.poll_input |> Status.update_body_num system
+  ( ( ( status |> Status.poll_input |> Status.update_body_num system
+      |> fun s ->
+        if s.mouse_state = Pressed then Status.toggle_pause s else s )
+    |> fun s ->
+      if s.space_state = Pressed then Status.cycle_focus s else s )
   |> fun s ->
-  if s.mouse_state = Pressed then Status.toggle_pause s
-  else
-    s |> fun s ->
-    if s.space_state = Pressed then Status.cycle_focus s
-    else
-      s |> fun s ->
-      if s.l_arrow_state = Pressed then Status.update_speed false s
-      else
-        s |> fun s ->
-        if s.r_arrow_state = Pressed then Status.update_speed true s
-        else s
+    if s.l_arrow_state = Pressed then Status.update_speed false s else s
+  )
+  |> fun s ->
+  if s.r_arrow_state = Pressed then Status.update_speed true s else s
 
 let seconds_per_frame : float = 1. /. 60.
 

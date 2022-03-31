@@ -62,13 +62,29 @@ let update_r_arrow input =
   in
   update_input (fun () -> !new_arrow) input
 
+let keys_down () =
+  let new_r = ref false in
+  let new_l = ref false in
+  let new_space = ref false in
+  let () =
+    while Graphics.key_pressed () do
+      match Graphics.read_key () with
+      | ' ' -> new_space := true
+      | ',' -> new_l := true
+      | '.' -> new_r := true
+      | _ -> ()
+    done
+  in
+  (new_space, new_l, new_r)
+
 let poll_input (status : t) : t =
+  let new_space, new_l, new_r = keys_down () in
   {
     status with
     mouse_state = update_mouse status.mouse_state;
-    space_state = update_space status.space_state;
-    l_arrow_state = update_l_arrow status.l_arrow_state;
-    r_arrow_state = update_r_arrow status.r_arrow_state;
+    space_state = update_input (fun () -> !new_space) status.space_state;
+    l_arrow_state = update_input (fun () -> !new_l) status.l_arrow_state;
+    r_arrow_state = update_input (fun () -> !new_r) status.r_arrow_state;
   }
 
 let change_focus status focus = { status with camera_focus = focus }
