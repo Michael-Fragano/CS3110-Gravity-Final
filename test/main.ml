@@ -42,7 +42,7 @@ let gravity_tests =
     ( "Gravitational Field y component" >:: fun t ->
       assert_equal ~-.0.06 (gy (grav_field tsys (bodies_ex b bod) bod))
     );
-    ( "Move one frame" >:: fun t ->
+    ( "Move one step y pos" >:: fun t ->
       assert_equal 17.9999994 (y_pos (move tsys bod)) );
   ]
 

@@ -133,6 +133,7 @@ let move s b =
     (make_p (b.pos.x +. (v.x *. s.dt)) (b.pos.y +. (v.y *. s.dt)))
     v b.mass b.color
 
+  (** Collisions *)
 let inel_col m1 m2 : velocity =
   {
     x =
@@ -186,7 +187,7 @@ let collision_check s =
     | h :: t -> collisior t h :: collides (collidee t h)
   in
   make_s s.dt s.g (collides b)
-
+(** end of collision funcitons*)
 let rec frame s f : system =
   if f > 0 then
     let rec new_bodies g =
