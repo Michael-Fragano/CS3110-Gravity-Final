@@ -28,6 +28,9 @@ let set_pos (dx : float) (dy : float) (cam : t) : t =
 let move (dx : float) (dy : float) (cam : t) : t =
   set_pos (cam.dx +. dx) (cam.dy +. dy) cam
 
+(** [center (x, y)] returns a tuple with [x] and [y] translated such
+    that the origin is the center of the window, instead of the lower
+    left corner *)
 let center ((x, y) : int * int) : int * int =
   (x + (Graphics.size_x () / 2), y + (Graphics.size_y () / 2))
 

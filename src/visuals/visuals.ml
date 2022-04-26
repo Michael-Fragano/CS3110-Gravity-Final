@@ -1,4 +1,6 @@
 open Graphics
+module Camera = Camera
+module Status = Status
 
 let init () =
   open_graph " 800x600";
@@ -18,14 +20,14 @@ let draw_focus (status : Status.t) =
   fill_rect 0 0 (size_x ()) 10;
   set_color black;
   let focus_str =
-    match status.camera_focus with
+    match Status.camera_focus status with
     | Origin -> "Origin"
     | Body n -> "Body " ^ string_of_int n
     | CenterOfMass -> "Center Of Mass"
     | Free -> "Free"
   in
   draw_string (Printf.sprintf "focus : " ^ focus_str);
-  draw_string (Printf.sprintf "  speed : %f" status.speed)
+  draw_string (Printf.sprintf "  speed : %f" (Status.speed status))
 
 let rec draw_bodies camera clear = function
   | [] -> ()
@@ -54,14 +56,17 @@ let render
 let poll (status : Status.t) (system : Gravity.system) : Status.t =
   ( ( ( status |> Status.poll_input |> Status.update_body_num system
       |> fun s ->
-        if s.mouse_state = Pressed then Status.toggle_pause s else s )
+        if Status.mouse_state s = Pressed then Status.toggle_pause s
+        else s )
     |> fun s ->
-      if s.space_state = Pressed then Status.cycle_focus s else s )
+      if Status.key_state ' ' s = Pressed then Status.cycle_focus s
+      else s )
   |> fun s ->
-    if s.l_arrow_state = Pressed then Status.update_speed false s else s
-  )
+    if Status.key_state ',' s = Pressed then Status.update_speed false s
+    else s )
   |> fun s ->
-  if s.r_arrow_state = Pressed then Status.update_speed true s else s
+  if Status.key_state '.' s = Pressed then Status.update_speed true s
+  else s
 
 let seconds_per_frame : float = 1. /. 60.
 
@@ -69,14 +74,15 @@ let update (system : Gravity.system) (status : Status.t) :
     Gravity.system =
   Gravity.frame system
     (int_of_float
-       (seconds_per_frame *. status.speed /. Gravity.timestep system))
+       (seconds_per_frame *. Status.speed status
+      /. Gravity.timestep system))
 (* <- gives ticks per frame*)
 
 let adjust
     (camera : Camera.t)
     (system : Gravity.system)
     (status : Status.t) : Camera.t =
-  match status.camera_focus with
+  match Status.camera_focus status with
   | Camera.Origin -> Camera.set_pos 0.0 0.0 camera
   | Camera.Body n ->
       let b = system |> Gravity.bods |> fun lst -> List.nth lst n in
@@ -118,7 +124,7 @@ let rec main_loop
     (time : float) : unit =
   render camera system status;
   let new_system =
-    if status.paused then system else update system status
+    if Status.is_paused status then system else update system status
   in
   let new_status = poll status new_system in
   let new_camera = adjust camera new_system new_status in

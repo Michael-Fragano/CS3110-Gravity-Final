@@ -1,6 +1,9 @@
 (** This library contains the necessary functions to display orbital
     data*)
 
+module Camera = Camera
+module Status = Status
+
 val start_window : unit -> unit
 (** Final starting program. Will open window with full gui*)
 

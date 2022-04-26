@@ -3,12 +3,11 @@ type input_state =
   | Pressed
   | Held
   | Released
+  | Unmonitored
 
 type t = {
   mouse_state : input_state;
-  space_state : input_state;
-  l_arrow_state : input_state;
-  r_arrow_state : input_state;
+  key_states : (char * input_state) list;
   camera_focus : Camera.focus;
   paused : bool;
   body_num : int;
@@ -17,74 +16,43 @@ type t = {
 
 let default () =
   {
+    mouse_state = Idle;
+    key_states = [ (' ', Idle); (',', Idle); ('.', Idle) ];
+    (* we can add any number of other keys here ^ *)
     camera_focus = Origin;
     paused = false;
-    mouse_state = Idle;
-    space_state = Idle;
-    l_arrow_state = Idle;
-    r_arrow_state = Idle;
     body_num = 0;
     speed = 1.;
   }
 
 let update_input is_down = function
-  | Idle -> if is_down () then Pressed else Idle
-  | Pressed -> if is_down () then Held else Released
-  | Held -> if is_down () then Held else Released
-  | Released -> if is_down () then Pressed else Idle
+  | Idle -> if is_down then Pressed else Idle
+  | Pressed -> if is_down then Held else Released
+  | Held -> if is_down then Held else Released
+  | Released | Unmonitored -> if is_down then Pressed else Idle
 
-let update_mouse = update_input Graphics.button_down
-
-let update_space input =
-  let new_space = ref false in
-  let () =
-    while Graphics.key_pressed () do
-      if Graphics.read_key () = ' ' then new_space := true
-    done
-  in
-  update_input (fun () -> !new_space) input
-
-let update_l_arrow input =
-  let new_arrow = ref false in
-  let () =
-    while Graphics.key_pressed () do
-      if Graphics.read_key () = ',' then new_arrow := true
-    done
-  in
-  update_input (fun () -> !new_arrow) input
-
-let update_r_arrow input =
-  let new_arrow = ref false in
-  let () =
-    while Graphics.key_pressed () do
-      if Graphics.read_key () = '.' then new_arrow := true
-    done
-  in
-  update_input (fun () -> !new_arrow) input
+let update_mouse state = update_input (Graphics.button_down ()) state
 
 let keys_down () =
-  let new_r = ref false in
-  let new_l = ref false in
-  let new_space = ref false in
-  let () =
+  let keys = ref [] in
+  let _ =
     while Graphics.key_pressed () do
       match Graphics.read_key () with
-      | ' ' -> new_space := true
-      | ',' -> new_l := true
-      | '.' -> new_r := true
-      | _ -> ()
+      | c -> keys := c :: !keys
     done
   in
-  (new_space, new_l, new_r)
+  !keys
 
 let poll_input (status : t) : t =
-  let new_space, new_l, new_r = keys_down () in
+  let keys = keys_down () in
   {
     status with
     mouse_state = update_mouse status.mouse_state;
-    space_state = update_input (fun () -> !new_space) status.space_state;
-    l_arrow_state = update_input (fun () -> !new_l) status.l_arrow_state;
-    r_arrow_state = update_input (fun () -> !new_r) status.r_arrow_state;
+    key_states =
+      List.map
+        (fun (key, state) ->
+          (key, update_input (List.mem key keys) state))
+        status.key_states;
   }
 
 let change_focus status focus = { status with camera_focus = focus }
@@ -116,3 +84,14 @@ let update_body_num system status =
       | Body n -> if n >= new_num then Body 0 else Body n
       | f -> f);
   }
+
+let mouse_state status = status.mouse_state
+
+let key_state c status =
+  match List.assoc_opt c status.key_states with
+  | Some state -> state
+  | None -> Unmonitored
+
+let camera_focus status = status.camera_focus
+let is_paused status = status.paused
+let speed status = status.speed
