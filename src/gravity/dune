@@ -1,4 +1,0 @@
-(library
- (name gravity)
- (public_name Gravity)
- (libraries yojson ANSITerminal))
