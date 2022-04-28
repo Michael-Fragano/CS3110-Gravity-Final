@@ -1,6 +1,7 @@
 open Graphics
 module Camera = Camera
 module Status = Status
+module Create = Create
 
 let init () =
   open_graph " 800x600";

@@ -16,6 +16,7 @@ type body = {
   mass : float;
   color : int;
   radius : float;
+  create : bool
 }
 
 type system = {
@@ -55,6 +56,7 @@ let body_json j =
     mass = to_float (member "mass" j);
     color = int_of_string (to_string (member "color" j));
     radius = cbrt (10.0 *. to_float (member "mass" j));
+    create = false;
   }
 
 let from_json json =
@@ -69,8 +71,8 @@ let make_g h v : g_field = { x = h; y = v }
 
 let make_v h v : velocity = { x = h; y = v }
 
-let make_b p v m c : body =
-  { pos = p; vel = v; mass = m; color = c; radius = cbrt (10.0 *. m) }
+let make_b p v m c cr: body =
+  { pos = p; vel = v; mass = m; color = c; radius = cbrt (10.0 *. m); create = cr}
 
 let make_p h v : position = { x = h; y = v }
 let make_s t gr b : system = { dt = t; g = gr; bodies = b }
@@ -82,6 +84,10 @@ let g_const s = s.g
 let bods s = s.bodies
 let rad b = b.radius
 let mass b = b.mass
+
+let velocity b = b.vel
+
+let create b = b.create
 
 let rec bodies_ex bds (b : body) =
   match bds with
@@ -102,6 +108,8 @@ let gy g = g.y
 let acc f m = f /. m
 let x_pos b = b.pos.x
 let y_pos b = b.pos.y
+
+let pos b = b.pos
 let color b = b.color
 
 (**Main Functions:*)
@@ -131,7 +139,7 @@ let move s b =
   let v = new_v b (grav_field s (bodies_ex s.bodies b) b) s.dt in
   make_b
     (make_p (b.pos.x +. (v.x *. s.dt)) (b.pos.y +. (v.y *. s.dt)))
-    v b.mass b.color
+    v b.mass b.color false
 
   (** Collisions *)
 let inel_col m1 m2 : velocity =
@@ -156,6 +164,7 @@ let collide b1 b2 : body =
     mass = b1.mass +. b2.mass;
     color = (if b1.mass >= b2.mass then b1.color else b2.color);
     radius = cbrt (10.0 *. (b1.mass +. b2.mass));
+    create = false
   }
 
 let within_range b1 b2 =

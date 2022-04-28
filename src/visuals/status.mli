@@ -5,6 +5,14 @@ type input_state =
   | Released
   | Unmonitored
 
+(** create_state is the current variable being edited for the system.
+    Either the location of a new body, the size of an already placed
+    body, or the velocity of an alcready placed body. *)
+type create_state =
+  | Location
+  | Size
+  | Velocity
+
 type t
 
 val default : unit -> t
@@ -39,6 +47,13 @@ val play : t -> t
 val toggle_pause : t -> t
 (** [toggle_pause status] toggles the paused flag*)
 
+val new_cstate : t -> t
+(** [new_cstate status] updates the create state to the next state.*)
+
+val reset_cstate : t -> t
+(** [reset_cstate status] updates the create_state to the Location
+    state.*)
+
 val update_speed : bool -> t -> t
 (** [update_speed f status] doubles the speed of the system playback if
     [f] is true, and halves it otherwise *)
@@ -49,6 +64,9 @@ val update_body_num : Gravity.system -> t -> t
 
 val mouse_state : t -> input_state
 (** [mouse_state status] returns the current state of the mouse*)
+
+val create_state : t -> create_state
+(** create_state status] returns the current create state of the system*)
 
 val key_state : char -> t -> input_state
 (** [key_state c status] returns the current state of the key [c]*)
