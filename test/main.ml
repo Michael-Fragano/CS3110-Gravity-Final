@@ -1,5 +1,5 @@
 open OUnit2
-open Gravity
+open Final.Gravity
 
 (** test_system.json*)
 let tst = Yojson.Basic.from_file "data/test_system.json"

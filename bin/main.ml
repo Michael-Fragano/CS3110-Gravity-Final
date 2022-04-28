@@ -10,7 +10,7 @@ let rec run_sim () =
     run_sim ())
   else
     try
-      Visuals.start_window_preset file;
+      Final.Visuals.start_window_preset file;
       run_sim ()
     with Sys_error str ->
       print_endline
