@@ -1,0 +1,6 @@
+(include_subdirs unqualified)
+
+(library
+ (name final)
+ (public_name Final)
+ (libraries graphics yojson ANSITerminal))
