@@ -1,8 +1,9 @@
 module type Segment = sig
   type t
 
-  val new_t : int -> int -> t
-  val draw : t -> unit
+  val new_t : float -> float -> t
+  val draw : Camera.t -> t -> unit
+  val clear : Camera.t -> t -> unit
 end
 
 module type SegmentMaker = functor (Config : PathConfig.Config) ->

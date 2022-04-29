@@ -12,6 +12,8 @@ type t = {
   paused : bool;
   body_num : int;
   speed : float;
+  show_paths : bool;
+  paths : Path.CirclePath.t;
 }
 
 let default () =
@@ -23,6 +25,8 @@ let default () =
     paused = false;
     body_num = 0;
     speed = 1.;
+    show_paths = false;
+    paths = Path.CirclePath.empty;
   }
 
 let update_input is_down = function

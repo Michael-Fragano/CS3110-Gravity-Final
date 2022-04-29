@@ -3,12 +3,15 @@ module type Path = sig
   type t
 
   val empty : t
-  val draw : t -> unit
+  val draw : Camera.t -> t -> unit
+  val clear : Camera.t -> t -> unit
   val length : t -> int
-  val add_segment : int -> int -> t -> t
+  val add_segment : float -> float -> t -> t
 end
 
 module Make
     (Config : PathConfig.Config)
     (SM : Segment.SegmentMaker)
     (QM : Queue.QueueMaker) : Path
+
+module CirclePath : Path

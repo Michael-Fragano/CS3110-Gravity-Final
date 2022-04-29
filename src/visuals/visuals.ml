@@ -41,6 +41,10 @@ let rec draw_bodies camera clear = function
           fill_circle x y (int_of_float (Gravity.rad h));
           draw_bodies camera clear t)
 
+let rec draw_path camera clear = function
+  | [] -> ()
+  | h :: t -> if clear then set_color background else set_color white
+
 let clear_system camera system =
   draw_bodies camera true (Gravity.bods system)
 
