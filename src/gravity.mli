@@ -30,9 +30,10 @@ val make_v : float -> float -> velocity
 (** [make_v v] creates a new velocity from two floats [h](horizontal)
     and [v](vertical)*)
 
-val make_b : position -> velocity -> float -> int -> body
-(** [make_b p v m] creates a new body from position [p], velocity [v]
-    and mass [m]*)
+val make_b : position -> velocity -> float -> int -> bool -> body
+(** [make_b p v m c cr] creates a new body from position [p], velocity
+    [v], mass [m], and color [c], with a bool for if it is in the
+    process of being created by the creator.*)
 
 val make_p : float -> float -> position
 (** [make_p h v] creates a new velocity from two floats [h](horizontal)
@@ -52,13 +53,20 @@ val g_const : system -> float
     system [s]*)
 
 val bods : system -> body list
-(** [bods s] takes a system [s] and returns the list of bodies for that system.*)
+(** [bods s] takes a system [s] and returns the list of bodies for that
+    system.*)
 
 val rad : body -> float
 (** [rad b] returns the radius of body [b]*)
 
 val mass : body -> float
 (** [mass b] returns the mass of body [b]*)
+
+val velocity : body -> velocity
+(** [velocity b] returns the velocity of body [b]*)
+
+val create : body -> bool
+(** [create b] returns if body [b] is in the create stage.*)
 
 val bodies_ex : body list -> body -> body list
 (** [bodies s b] returns a list of the bodies in system [s], excluding
@@ -93,6 +101,10 @@ val x_pos : body -> float
 
 val y_pos : body -> float
 (** [y_pos b] returns the y position of body [b]*)
+
+val pos : body -> position
+(** [pos b] returns the position of body [b]*)
+
 val color : body -> int
 (** [color b] returns the color of body [b] in RGB format*)
 
@@ -111,12 +123,14 @@ val move : system -> body -> body
 (** [move s b] takes a body [b] of system [s] and determines what its
     new position is after one frame*)
 
-val collide : body  -> body -> body
-(** [collide b1 b2] takes a bodies [b1] and [b2] and calculates a new body with a position, speed and velocity based on an inelastic collision*)
+val collide : body -> body -> body
+(** [collide b1 b2] takes a bodies [b1] and [b2] and calculates a new
+    body with a position, speed and velocity based on an inelastic
+    collision*)
 
 val collision_check : system -> system
-(** [collision_check s] takes system [s] and removes one any bodies that are 
-within the radius of another body.*)
+(** [collision_check s] takes system [s] and removes one any bodies that
+    are within the radius of another body.*)
 
 val frame : system -> int -> system
 (** [frame s f] takes the current system and runs what will happen to

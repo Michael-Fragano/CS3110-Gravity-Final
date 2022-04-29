@@ -5,6 +5,11 @@ type input_state =
   | Released
   | Unmonitored
 
+type create_state =
+  | Location
+  | Size
+  | Velocity
+
 type t = {
   mouse_state : input_state;
   key_states : (char * input_state) list;
@@ -14,12 +19,13 @@ type t = {
   speed : float;
   show_paths : bool;
   paths : Path.CirclePath.t;
+  cstate : create_state;
 }
 
 let default () =
   {
     mouse_state = Idle;
-    key_states = [ (' ', Idle); (',', Idle); ('.', Idle) ];
+    key_states = [ (' ', Idle); (',', Idle); ('.', Idle); ('k', Idle) ];
     (* we can add any number of other keys here ^ *)
     camera_focus = Origin;
     paused = false;
@@ -27,6 +33,7 @@ let default () =
     speed = 1.;
     show_paths = false;
     paths = Path.CirclePath.empty;
+    cstate = Location;
   }
 
 let update_input is_down = function
@@ -34,6 +41,11 @@ let update_input is_down = function
   | Pressed -> if is_down then Held else Released
   | Held -> if is_down then Held else Released
   | Released | Unmonitored -> if is_down then Pressed else Idle
+
+let update_cstate = function
+  | Location -> Size
+  | Size -> Velocity
+  | Velocity -> Location
 
 let update_mouse state = update_input (Graphics.button_down ()) state
 
@@ -74,6 +86,11 @@ let pause status = { status with paused = true }
 let play status = { status with paused = false }
 let toggle_pause status = { status with paused = not status.paused }
 
+let new_cstate status =
+  { status with cstate = update_cstate status.cstate }
+
+let reset_cstate status = { status with cstate = Location }
+
 let update_speed f status =
   if f = true then { status with speed = status.speed *. 2. }
   else { status with speed = status.speed /. 2. }
@@ -90,6 +107,7 @@ let update_body_num system status =
   }
 
 let mouse_state status = status.mouse_state
+let create_state status = status.cstate
 
 let key_state c status =
   match List.assoc_opt c status.key_states with
