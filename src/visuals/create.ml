@@ -49,9 +49,11 @@ let poll (status : Status.t) (system : Gravity.system) =
     Graphics.close_graph ();
     try
       Visuals.start_window_from_create system;
+      init ();
       s
     with Sys_error str ->
-      Graphics.close_graph ();
+      print_endline "\n~~Sorry, something broke. Please try again!\n";
+      init ();
       s)
   else s
 
