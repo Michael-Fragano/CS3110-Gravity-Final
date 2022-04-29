@@ -1,7 +1,4 @@
 open Graphics
-module Camera = Camera
-module Status = Status
-module Create = Create
 
 let init () =
   open_graph " 800x600";
@@ -143,6 +140,14 @@ let start_window_preset json =
     "data/" ^ json ^ ".json"
     |> Yojson.Basic.from_file |> Gravity.from_json
   in
+  try
+    init ();
+    main_loop Camera.default system (Status.default ())
+      (Unix.gettimeofday ())
+  with Graphics.Graphic_failure "fatal I/O error" ->
+    Graphics.close_graph ()
+
+let start_window_from_create system =
   try
     init ();
     main_loop Camera.default system (Status.default ())

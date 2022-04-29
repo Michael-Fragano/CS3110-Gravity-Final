@@ -12,7 +12,7 @@ let rec create () =
       else
         try
           let grav = float_of_string grav_str in
-          Final.Visuals.Create.start_window dt grav
+          Final.Create.start_window dt grav
         with Failure str ->
           print_endline
             "Sorry, the gravitatinoal constant needs to be a float! \

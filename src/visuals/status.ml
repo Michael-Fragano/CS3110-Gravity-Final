@@ -23,7 +23,7 @@ type t = {
 let default () =
   {
     mouse_state = Idle;
-    key_states = [ (' ', Idle); (',', Idle); ('.', Idle) ];
+    key_states = [ (' ', Idle); (',', Idle); ('.', Idle); ('k', Idle) ];
     (* we can add any number of other keys here ^ *)
     camera_focus = Origin;
     paused = false;

@@ -37,22 +37,23 @@ let render (system : Gravity.system) (status : Status.t) =
   clear_system system
 
 let poll (status : Status.t) (system : Gravity.system) =
-  ( status |> Status.poll_input |> Status.update_body_num system
-  |> fun s -> if mouse_state s = Pressed then Status.new_cstate s else s
-  )
+  ( ( status |> Status.poll_input |> Status.update_body_num system
+    |> fun s ->
+      if Status.mouse_state s = Pressed then Status.new_cstate s else s
+    )
   |> fun s ->
-  if key_state ' ' s = Pressed then Status.reset_cstate s
-  else
-    s |> fun s ->
-    if key_state '\n' s = Pressed then (
-      (**try
-        Visuals.main_loop Camera.default system (Status.default ())
-          (Unix.gettimeofday ());
-        s
-      with Graphics.Graphic_failure "fatal I/O error" ->
-        Graphics.close_graph ();
-        s)*) s)
-    else s
+    if Status.key_state ' ' s = Pressed then Status.reset_cstate s
+    else s )
+  |> fun s ->
+  if Status.key_state 'k' s = Pressed then (
+    Graphics.close_graph ();
+    try
+      Visuals.start_window_from_create system;
+      s
+    with Sys_error str ->
+      Graphics.close_graph ();
+      s)
+  else s
 
 let seconds_per_frame : float = 1. /. 60.
 
