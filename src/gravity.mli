@@ -129,7 +129,7 @@ val collide : body -> body -> body
     collision*)
 
 val collision_check : system -> system
-(** [collision_check s] takes system [s] and removes one any bodies that
+(** [collision_check s] takes system [s] and removes any bodies that
     are within the radius of another body.*)
 
 val frame : system -> int -> system
