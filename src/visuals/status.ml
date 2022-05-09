@@ -18,21 +18,24 @@ type t = {
   body_num : int;
   speed : float;
   show_paths : bool;
-  paths : Path.CirclePath.t;
+  paths : Paths.t;
   cstate : create_state;
 }
 
 let default () =
   {
     mouse_state = Idle;
-    key_states = [ (' ', Idle); (',', Idle); ('.', Idle); ('k', Idle) ];
+    key_states =
+      [
+        (' ', Idle); (',', Idle); ('.', Idle); ('k', Idle); ('p', Idle);
+      ];
     (* we can add any number of other keys here ^ *)
     camera_focus = Origin;
     paused = false;
     body_num = 0;
     speed = 1.;
-    show_paths = false;
-    paths = Path.CirclePath.empty;
+    show_paths = true;
+    paths = Paths.create ();
     cstate = Location;
   }
 
@@ -117,3 +120,11 @@ let key_state c status =
 let camera_focus status = status.camera_focus
 let is_paused status = status.paused
 let speed status = status.speed
+let show_paths status = status.show_paths
+let paths status = status.paths
+
+let update_paths system status =
+  { status with paths = Paths.update system status.paths }
+
+let toggle_paths status =
+  { status with show_paths = not status.show_paths }

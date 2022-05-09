@@ -1,31 +1,52 @@
-module type Segment = sig
-  type t
+type shape =
+  | Circle of float
+  | Rectangle of float * float
 
-  val new_t : float -> float -> t
-  val draw : Camera.t -> t -> unit
-  val clear : Camera.t -> t -> unit
-end
+type t = {
+  x : float;
+  y : float;
+  s : shape;
+  c : int;
+  hollow : bool;
+}
 
-module type SegmentMaker = functor (Config : PathConfig.Config) ->
-  Segment
+let new_t x y s c ?(hollow = false) () = { x; y; s; c; hollow }
 
-module Make (Config : PathConfig.Config) : Segment = struct
-  type t = {
-    x : float;
-    y : float;
-    r : int;
-    c : int;
-  }
+let new_circle x y r c ?(hollow = false) () =
+  new_t x y (Circle r) c ~hollow ()
 
-  let new_t x y = { x; y; r = Config.size; c = 0xFF0000 }
+let new_rectangle x y w h c ?(hollow = false) () =
+  new_t x y (Rectangle (w, h)) c ~hollow ()
 
-  let draw camera seg =
-    Graphics.set_color seg.c;
-    let x, y = Camera.to_window camera seg.x seg.y in
-    Graphics.draw_circle x y seg.r
+let new_square x y w c ?(hollow = false) () =
+  new_rectangle x y w w c ~hollow ()
 
-  let clear camera seg =
-    Graphics.set_color Graphics.background;
-    let x, y = Camera.to_window camera seg.x seg.y in
-    Graphics.draw_circle x y seg.r
-end
+let draw camera seg =
+  Graphics.set_color seg.c;
+  let x, y = Camera.to_window camera seg.x seg.y in
+  match seg.s with
+  | Circle r ->
+      let r = Camera.to_window_scale camera r in
+      (if seg.hollow then Graphics.draw_circle
+      else Graphics.fill_circle)
+        x y r
+  | Rectangle (w, h) ->
+      let w = Camera.to_window_scale camera w in
+      let h = Camera.to_window_scale camera h in
+      (if seg.hollow then Graphics.draw_rect else Graphics.fill_rect)
+        x y w h
+
+let clear camera seg =
+  Graphics.set_color Graphics.background;
+  let x, y = Camera.to_window camera seg.x seg.y in
+  match seg.s with
+  | Circle r ->
+      let r = Camera.to_window_scale camera r in
+      (if seg.hollow then Graphics.draw_circle
+      else Graphics.fill_circle)
+        x y r
+  | Rectangle (w, h) ->
+      let w = Camera.to_window_scale camera w in
+      let h = Camera.to_window_scale camera h in
+      (if seg.hollow then Graphics.draw_rect else Graphics.fill_rect)
+        x y w h

@@ -7,20 +7,14 @@ type focus =
 type t = {
   dx : float;
   dy : float;
-  sx : float;
-  sy : float;
+  s : float;
 }
 (** (dx, dy) is the point in the system space that the camera is
-    centered over. sx and sy are respective distances that map to 1
-    pixel in the window. *)
+    centered over. s is the distance that map to 1 pixel in the window. *)
 
-let default : t = { dx = 0.; dy = 0.; sx = 1.; sy = 1. }
-
-let set_scale (sx : float) (sy : float) (cam : t) : t =
-  { cam with sx; sy }
-
-let zoom (k : float) (cam : t) : t =
-  set_scale (cam.sx *. k) (cam.sy *. k) cam
+let default : t = { dx = 0.; dy = 0.; s = 1. }
+let set_scale (s : float) (cam : t) : t = { cam with s }
+let zoom (k : float) (cam : t) : t = set_scale (cam.s *. k) cam
 
 let set_pos (dx : float) (dy : float) (cam : t) : t =
   { cam with dx; dy }
@@ -36,5 +30,8 @@ let center ((x, y) : int * int) : int * int =
 
 let to_window (cam : t) (x : float) (y : float) : int * int =
   center
-    ( int_of_float @@ ((x -. cam.dx) /. cam.sx),
-      int_of_float @@ ((y -. cam.dy) /. cam.sy) )
+    ( int_of_float @@ ((x -. cam.dx) /. cam.s),
+      int_of_float @@ ((y -. cam.dy) /. cam.s) )
+
+let to_window_scale (cam : t) (s : float) : int =
+  int_of_float @@ Float.ceil @@ (s /. cam.s)

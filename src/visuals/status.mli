@@ -79,3 +79,18 @@ val is_paused : t -> bool
 
 val speed : t -> float
 (** [speed status] returns the current speed of the system*)
+
+val show_paths : t -> bool
+(** [show_paths status] returns if the paths should be shown on the
+    screen*)
+
+val paths : t -> Paths.t
+(** [paths status] returns the list of paths to be shown on the screen*)
+
+val update_paths : Gravity.system -> t -> t
+(** [update_paths system status] updates the paths in [status] based on
+    the state of [system] *)
+
+val toggle_paths : t -> t
+(** [toggle_paths t] toggles whether the paths should be shown on the
+    screen *)

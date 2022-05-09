@@ -1,1 +1,0 @@
-module Make : Queue.QueueMaker

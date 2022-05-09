@@ -39,40 +39,50 @@ let rec draw_bodies camera clear = function
           fill_circle x y (int_of_float (Gravity.rad h));
           draw_bodies camera clear t)
 
-let rec draw_path camera clear = function
-  | [] -> ()
-  | h :: t -> if clear then set_color background else set_color white
+let rec draw_paths camera clear paths =
+  (if clear then Paths.clear else Paths.draw) camera paths
 
-let clear_system camera system =
-  draw_bodies camera true (Gravity.bods system)
+let clear_screen camera system status =
+  draw_bodies camera true (Gravity.bods system);
+  if Status.show_paths status then
+    draw_paths camera true (Status.paths status)
 
 let render
     (camera : Camera.t)
     (system : Gravity.system)
     (status : Status.t) : unit =
   draw_bodies camera false (Gravity.bods system);
+  if Status.show_paths status then
+    draw_paths camera false (Status.paths status);
   draw_focus status;
   synchronize ();
-  clear_system camera system
+  clear_screen camera system status
 
-let poll (status : Status.t) (system : Gravity.system) : Status.t =
-  ( ( ( status |> Status.poll_input |> Status.update_body_num system
+let update_status (status : Status.t) (system : Gravity.system) :
+    Status.t =
+  ( ( ( ( status |> Status.poll_input |> Status.update_body_num system
+        |> fun s ->
+          if Status.mouse_state s = Pressed then Status.toggle_pause s
+          else s )
       |> fun s ->
-        if Status.mouse_state s = Pressed then Status.toggle_pause s
+        if Status.key_state ' ' s = Pressed then Status.cycle_focus s
         else s )
     |> fun s ->
-      if Status.key_state ' ' s = Pressed then Status.cycle_focus s
+      if Status.key_state ',' s = Pressed then
+        Status.update_speed false s
       else s )
   |> fun s ->
-    if Status.key_state ',' s = Pressed then Status.update_speed false s
+    if Status.key_state '.' s = Pressed then Status.update_speed true s
     else s )
   |> fun s ->
-  if Status.key_state '.' s = Pressed then Status.update_speed true s
-  else s
+  if Status.key_state 'p' s = Pressed then Status.toggle_paths s else s
+
+let update_paths (system : Gravity.system) (status : Status.t) =
+  Status.update_paths system status
 
 let seconds_per_frame : float = 1. /. 60.
 
-let update (system : Gravity.system) (status : Status.t) :
+let update_system (system : Gravity.system) (status : Status.t) :
     Gravity.system =
   Gravity.frame system
     (int_of_float
@@ -126,14 +136,17 @@ let rec main_loop
     (time : float) : unit =
   render camera system status;
   let new_system =
-    if Status.is_paused status then system else update system status
+    if Status.is_paused status then system
+    else update_system system status
   in
-  let new_status = poll status new_system in
+  let new_status =
+    update_status status new_system |> update_paths new_system
+  in
   let new_camera = adjust camera new_system new_status in
   let new_time = Unix.gettimeofday () in
   let time_left = seconds_per_frame -. new_time +. time in
   if time_left > 0. then Unix.sleepf time_left;
-  main_loop new_camera new_system new_status new_time
+  main_loop new_camera new_system new_status (new_time +. time_left)
 
 let start_window () =
   init ();
