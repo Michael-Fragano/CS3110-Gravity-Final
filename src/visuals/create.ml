@@ -27,6 +27,13 @@ let rec draw_bodies clear = function
       with
       | x, y ->
           fill_circle x y (int_of_float (Gravity.rad h));
+          if clear then set_color background else set_color 000000;
+          Graphics.draw_poly_line
+            [|
+              (x, y);
+              ( int_of_float (Gravity.x_vel h) + x,
+                int_of_float (Gravity.y_vel h) + y );
+            |];
           draw_bodies clear t)
 
 let clear_system system = draw_bodies true (Gravity.bods system)

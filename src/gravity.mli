@@ -65,6 +65,12 @@ val mass : body -> float
 val velocity : body -> velocity
 (** [velocity b] returns the velocity of body [b]*)
 
+val x_vel : body -> float
+(** [velocity b] returns the x velocity of body [b]*)
+
+val y_vel : body -> float
+(** [velocity b] returns the y velocity of body [b]*)
+
 val create : body -> bool
 (** [create b] returns if body [b] is in the create stage.*)
 
@@ -129,8 +135,8 @@ val collide : body -> body -> body
     collision*)
 
 val collision_check : system -> system
-(** [collision_check s] takes system [s] and removes any bodies that
-    are within the radius of another body.*)
+(** [collision_check s] takes system [s] and removes any bodies that are
+    within the radius of another body.*)
 
 val frame : system -> int -> system
 (** [frame s f] takes the current system and runs what will happen to

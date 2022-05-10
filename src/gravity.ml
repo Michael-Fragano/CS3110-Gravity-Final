@@ -87,6 +87,9 @@ let mass b = b.mass
 
 let velocity b = b.vel
 
+let x_vel b = b.vel.x
+let y_vel b = b.vel.y
+
 let create b = b.create
 
 let rec bodies_ex bds (b : body) =
