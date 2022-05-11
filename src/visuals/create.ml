@@ -44,12 +44,16 @@ let render (system : Gravity.system) (status : Status.t) =
   clear_system system
 
 let poll (status : Status.t) (system : Gravity.system) =
-  ( ( status |> Status.poll_input |> Status.update_body_num system
+  ( ( ( status |> Status.poll_input |> Status.update_body_num system
+      |> fun s ->
+        if Status.mouse_state s = Pressed then Status.new_cstate s
+        else s )
     |> fun s ->
-      if Status.mouse_state s = Pressed then Status.new_cstate s else s
-    )
+      if Status.key_state ' ' s = Pressed then Status.reset_cstate s
+      else s )
   |> fun s ->
-    if Status.key_state ' ' s = Pressed then Status.reset_cstate s
+    if Status.key_state 'd' s = Pressed then Status.cdelete s
+    else if Status.create_state s = Delete then Status.reset_cstate s
     else s )
   |> fun s ->
   if Status.key_state 'k' s = Pressed then (
@@ -143,6 +147,24 @@ let update_system system ostatus nstatus =
           Gravity.make_b (Gravity.pos b) (Gravity.velocity b)
             (Gravity.mass b) 0xFF0000 false
           :: cd)
+  else if Status.create_state nstatus = Delete then
+    let rec nbods bods =
+      match bods with
+      | [] -> []
+      | h :: t ->
+          if
+            distance
+              (float_of_int (fst e - (Graphics.size_x () / 2)))
+              (float_of_int (snd e - (Graphics.size_y () / 2)))
+              (Gravity.x_pos h) (Gravity.y_pos h)
+            <= Gravity.rad h
+          then nbods t
+          else h :: nbods t
+    in
+    Gravity.make_s
+      (Gravity.timestep system)
+      (Gravity.g_const system)
+      (nbods (Gravity.bods system))
   else system
 
 let rec create_loop

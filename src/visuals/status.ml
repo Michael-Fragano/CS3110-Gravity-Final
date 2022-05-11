@@ -9,6 +9,7 @@ type create_state =
   | Location
   | Size
   | Velocity
+  | Delete
 
 type t = {
   mouse_state : input_state;
@@ -27,7 +28,12 @@ let default () =
     mouse_state = Idle;
     key_states =
       [
-        (' ', Idle); (',', Idle); ('.', Idle); ('k', Idle); ('p', Idle);
+        (' ', Idle);
+        (',', Idle);
+        ('.', Idle);
+        ('k', Idle);
+        ('p', Idle);
+        ('d', Idle);
       ];
     (* we can add any number of other keys here ^ *)
     camera_focus = Origin;
@@ -49,6 +55,11 @@ let update_cstate = function
   | Location -> Size
   | Size -> Velocity
   | Velocity -> Location
+  | Delete -> Location
+
+let delete_cstate = function
+  | Location -> Delete
+  | a -> a
 
 let update_mouse state = update_input (Graphics.button_down ()) state
 
@@ -93,6 +104,9 @@ let new_cstate status =
   { status with cstate = update_cstate status.cstate }
 
 let reset_cstate status = { status with cstate = Location }
+
+let cdelete status =
+  { status with cstate = delete_cstate status.cstate }
 
 let update_speed f status =
   if f = true then { status with speed = status.speed *. 2. }

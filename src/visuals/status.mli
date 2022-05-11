@@ -12,6 +12,7 @@ type create_state =
   | Location
   | Size
   | Velocity
+  | Delete
 
 type t
 
@@ -53,6 +54,10 @@ val new_cstate : t -> t
 val reset_cstate : t -> t
 (** [reset_cstate status] updates the create_state to the Location
     state.*)
+
+val cdelete : t -> t
+(** [celete status] updates the create_state to the Delete state, if the
+    state is currently in the Location state.*)
 
 val update_speed : bool -> t -> t
 (** [update_speed f status] doubles the speed of the system playback if
