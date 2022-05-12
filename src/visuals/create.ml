@@ -16,6 +16,46 @@ let rec draw_coords status =
     (Printf.sprintf "x : %n, y : %n" status.mouse_x status.mouse_y);
   draw_coords (wait_next_event [ Mouse_motion ])
 
+let draw_status (status : Status.t) (system : Gravity.system) =
+  moveto 0 0;
+  set_color background;
+  fill_rect 0 0 (size_x ()) 10;
+  set_color black;
+  let e = Graphics.mouse_pos () in
+  let rec creates bods =
+    match bods with
+    | [] -> None
+    | [ h ] -> if Gravity.create h = true then Some h else None
+    | h :: t -> if Gravity.create h = true then Some h else creates t
+  in
+  let cs = creates (Gravity.bods system) in
+  match Status.create_state status with
+  | Location ->
+      draw_string
+        (Printf.sprintf "X Position : %n, Y Position : %n" (fst e)
+           (snd e))
+  | Delete ->
+      draw_string
+        (Printf.sprintf "X Position : %n, Y Position : %n" (fst e)
+           (snd e))
+  | Size -> (
+      match cs with
+      | None -> draw_string " "
+      | Some b ->
+          draw_string
+            (Printf.sprintf "Radius : %f, Mass : %f" (Gravity.rad b)
+               (Gravity.mass b)))
+  | Velocity -> (
+      let pyth x y = sqrt ((x ** 2.) +. (y ** 2.)) in
+      match cs with
+      | None -> draw_string " "
+      | Some b ->
+          draw_string
+            (Printf.sprintf
+               "X Velocity : %f, Y Velocity : %f, Total Velocity : %f"
+               (Gravity.x_vel b) (Gravity.y_vel b)
+               (pyth (Gravity.x_vel b) (Gravity.y_vel b))))
+
 let rec draw_bodies clear = function
   | [] -> ()
   | h :: t -> (
@@ -40,6 +80,7 @@ let clear_system system = draw_bodies true (Gravity.bods system)
 
 let render (system : Gravity.system) (status : Status.t) =
   draw_bodies false (Gravity.bods system);
+  draw_status status system;
   synchronize ();
   clear_system system
 
