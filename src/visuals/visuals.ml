@@ -60,22 +60,15 @@ let render
 
 let update_status (status : Status.t) (system : Gravity.system) :
     Status.t =
-  ( ( ( ( status |> Status.poll_input |> Status.update_body_num system
-        |> fun s ->
-          if Status.mouse_state s = Pressed then Status.toggle_pause s
-          else s )
-      |> fun s ->
-        if Status.key_state ' ' s = Pressed then Status.cycle_focus s
-        else s )
-    |> fun s ->
-      if Status.key_state ',' s = Pressed then
-        Status.update_speed false s
-      else s )
-  |> fun s ->
-    if Status.key_state '.' s = Pressed then Status.update_speed true s
-    else s )
-  |> fun s ->
-  if Status.key_state 'p' s = Pressed then Status.toggle_paths s else s
+  status |> Status.poll_input
+  |> Status.update_body_num system
+  |> Status.bind_mouse Pressed Status.toggle_pause
+  |> Status.bind_key ' ' Pressed Status.cycle_focus
+  |> Status.bind_key ',' Pressed (Status.update_speed false)
+  |> Status.bind_key '.' Pressed (Status.update_speed true)
+  |> Status.bind_key 'p' Pressed Status.toggle_paths
+  |> Status.bind_key 'q' Pressed (fun _ ->
+         raise @@ Graphics.Graphic_failure "Quit Window")
 
 let update_paths (system : Gravity.system) (status : Status.t) =
   Status.update_paths system status
@@ -161,13 +154,11 @@ let start_window_preset json =
     init ();
     main_loop Camera.default system (Status.default ())
       (Unix.gettimeofday ())
-  with Graphics.Graphic_failure "fatal I/O error" ->
-    Graphics.close_graph ()
+  with Graphics.Graphic_failure _ -> Graphics.close_graph ()
 
 let start_window_from_create system =
   try
     init ();
     main_loop Camera.default system (Status.default ())
       (Unix.gettimeofday ())
-  with Graphics.Graphic_failure "fatal I/O error" ->
-    Graphics.close_graph ()
+  with Graphics.Graphic_failure _ -> Graphics.close_graph ()
