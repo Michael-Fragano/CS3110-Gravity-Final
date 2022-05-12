@@ -44,25 +44,18 @@ let render (system : Gravity.system) (status : Status.t) =
   clear_system system
 
 let poll (status : Status.t) (system : Gravity.system) =
-  ( ( status |> Status.poll_input |> Status.update_body_num system
-    |> fun s ->
-      if Status.mouse_state s = Pressed then Status.new_cstate s else s
-    )
-  |> fun s ->
-    if Status.key_state ' ' s = Pressed then Status.reset_cstate s
-    else s )
-  |> fun s ->
-  if Status.key_state 'k' s = Pressed then (
-    Graphics.close_graph ();
-    try
-      Visuals.start_window_from_create system;
-      init ();
-      s
-    with Sys_error str ->
-      print_endline "\n~~Sorry, something broke. Please try again!\n";
-      init ();
-      s)
-  else s
+  status |> Status.poll_input
+  |> Status.update_body_num system
+  |> Status.bind_mouse Pressed Status.toggle_pause
+  |> Status.bind_key ' ' Pressed Status.reset_cstate
+  |> Status.bind_key 'k' Pressed (fun s ->
+         Graphics.close_graph ();
+         (try Visuals.start_window_from_create system
+          with Sys_error str ->
+            print_endline
+              "\n~~Sorry, something broke. Please try again!\n");
+         init ();
+         s)
 
 let seconds_per_frame : float = 1. /. 60.
 
