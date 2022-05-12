@@ -46,8 +46,8 @@ let render (system : Gravity.system) (status : Status.t) =
 let poll (status : Status.t) (system : Gravity.system) =
   status |> Status.poll_input
   |> Status.update_body_num system
-  |> Status.bind_mouse Pressed Status.toggle_pause
-  |> Status.bind_key ' ' Pressed Status.cycle_focus
+  |> Status.bind_mouse Pressed Status.new_cstate
+  |> Status.bind_key ' ' Pressed Status.reset_cstate
   |> Status.bind_key 'k' Pressed (fun s ->
          Graphics.close_graph ();
          (try Visuals.start_window_from_create system
@@ -58,10 +58,8 @@ let poll (status : Status.t) (system : Gravity.system) =
          s)
   |> Status.bind_key 'q' Pressed (fun _ ->
          raise @@ Graphics.Graphic_failure "Quit Window")
-  |> fun s ->
-  if Status.key_state 'd' s = Pressed then Status.cdelete s
-  else if Status.create_state s = Delete then Status.reset_cstate s
-  else s
+  |> Status.bind_key 'd' Pressed Status.cdelete
+  |> Status.bind_key 'd' Released Status.reset_cstate
 
 let seconds_per_frame : float = 1. /. 60.
 
