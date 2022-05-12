@@ -16,12 +16,18 @@ type t = data * queue
     contains constants to control how frames are used in the queue *)
 
 let is_empty ((_, q) : t) : bool = Queue.is_empty q
-let is_full ((data, q) : t) : bool = Queue.is_full data.max_length q
-let remove_frame ((data, q) : t) : t = (data, Queue.dequeue q)
-let add_frame frame ((data, q) : t) : t = (data, Queue.enqueue frame q)
+let is_full ((data, q) : t) : bool = Queue.length q >= data.max_length
+
+let remove_frame ((data, q) : t) : t =
+  ignore @@ Queue.pop q;
+  (data, q)
+
+let add_frame frame ((data, q) : t) : t =
+  Queue.push frame q;
+  (data, q)
 
 let create ?(max_length = 50) ?(min_period = 20) () : t =
-  ({ max_length; min_period }, Queue.empty)
+  ({ max_length; min_period }, Queue.create ())
 
 let update =
   let frame_counter = ref ~-1 in
