@@ -1,12 +1,15 @@
 let rec create () =
   print_endline
-    "How many seconds do you want per step of the simulation?";
+    "How many seconds do you want per step of the simulation? (Try \
+     0.001, or type 'Q' to go back)";
   let dt_str = read_line () in
   if dt_str = "Q" then print_endline " "
   else
     try
       let dt = float_of_string dt_str in
-      print_endline "What do you want the gravitational constant to be?";
+      print_endline
+        "What do you want the gravitational constant to be? (Try a \
+         number around 1000, or type 'Q' to go back)";
       let grav_str = read_line () in
       if grav_str = "Q" then print_endline " "
       else

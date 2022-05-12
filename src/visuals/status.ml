@@ -34,6 +34,7 @@ let default () =
         ('k', Idle);
         ('p', Idle);
         ('d', Idle);
+        ('q', Idle);
       ];
     (* we can add any number of other keys here ^ *)
     camera_focus = Origin;
@@ -131,6 +132,8 @@ let key_state c status =
   | Some state -> state
   | None -> Unmonitored
 
+let bind_mouse state f s = if mouse_state s = state then f s else s
+let bind_key key state f s = if key_state key s = state then f s else s
 let camera_focus status = status.camera_focus
 let is_paused status = status.paused
 let speed status = status.speed

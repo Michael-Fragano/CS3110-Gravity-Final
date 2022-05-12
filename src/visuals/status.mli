@@ -76,6 +76,14 @@ val create_state : t -> create_state
 val key_state : char -> t -> input_state
 (** [key_state c status] returns the current state of the key [c]*)
 
+val bind_mouse : input_state -> (t -> t) -> t -> t
+(** [bind_mouse state f status] returns [f status] if [state] matches
+    [mouse_state status]. Otherwise returns [status] *)
+
+val bind_key : char -> input_state -> (t -> t) -> t -> t
+(** [bind_mouse c state f status] returns [f status] if [state] matches
+    [key_state c status]. Otherwise returns [status] *)
+
 val camera_focus : t -> Camera.focus
 (** [camera_focus status] is the current focus of the camera*)
 
