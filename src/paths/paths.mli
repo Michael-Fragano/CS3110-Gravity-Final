@@ -1,6 +1,22 @@
+type frame = Segment.t list
+(** [frame] represents a snapshot of all paths at a point in time *)
+
 type t
 (** This type represents the data required to show the paths of a system
     on the window *)
+
+val is_empty : t -> bool
+(** [is_empty p] is whether p is empty *)
+
+val is_full : t -> bool
+(** [is_full p] is whether p is full *)
+
+val remove_frame : t -> t
+(** [pop p] returns [p] with is head removed *)
+
+val add_frame : frame -> t -> t
+(** [push p] returns [p] with [frame] included at its tail.
+    Precondition: p is not full *)
 
 val create : ?max_length:int -> ?min_period:int -> unit -> t
 (** [create ()] initializes a new variable of type [Paths.t]. Optional
