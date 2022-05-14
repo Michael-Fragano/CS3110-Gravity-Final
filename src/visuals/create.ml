@@ -220,3 +220,14 @@ let start_window dt grav =
     create_loop system (Status.default ()) (Unix.gettimeofday ())
   with Graphics.Graphic_failure "fatal I/O error" ->
     Graphics.close_graph ()
+
+let start_window_from_json json =
+  let system =
+    "data/" ^ json ^ ".json"
+    |> Yojson.Basic.from_file |> Gravity.from_json
+  in
+  try
+    init ();
+    create_loop system (Status.default ()) (Unix.gettimeofday ())
+  with Graphics.Graphic_failure "fatal I/O error" ->
+    Graphics.close_graph ()
