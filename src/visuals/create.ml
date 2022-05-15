@@ -218,8 +218,7 @@ let start_window dt grav =
   try
     init ();
     create_loop system (Status.default ()) (Unix.gettimeofday ())
-  with Graphics.Graphic_failure "fatal I/O error" ->
-    Graphics.close_graph ()
+  with Graphics.Graphic_failure _ -> Graphics.close_graph ()
 
 let start_window_from_json json =
   let system =
@@ -229,5 +228,4 @@ let start_window_from_json json =
   try
     init ();
     create_loop system (Status.default ()) (Unix.gettimeofday ())
-  with Graphics.Graphic_failure "fatal I/O error" ->
-    Graphics.close_graph ()
+  with Graphics.Graphic_failure _ -> Graphics.close_graph ()

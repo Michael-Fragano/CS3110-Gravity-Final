@@ -29,6 +29,7 @@ let obodfin = List.hd tailfin
 
 (** collision.json *)
 let col = Yojson.Basic.from_file "data/collision_test.json"
+
 let csys = from_json col
 let blist = bods csys
 let bod1 = List.hd blist
@@ -36,7 +37,6 @@ let tail1 = List.tl blist
 let bod2 = List.hd tail1
 let tail2 = List.tl tail1
 let expect1 = List.hd tail2
-
 
 let gravity_tests =
   [
