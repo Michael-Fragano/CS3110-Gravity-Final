@@ -27,6 +27,17 @@ let bbodfin = List.hd bbfin
 let tailfin = List.tl bbfin
 let obodfin = List.hd tailfin
 
+(** collision.json *)
+let col = Yojson.Basic.from_file "data/collision_test.json"
+
+let csys = from_json col
+let blist = bods csys
+let bod1 = List.hd blist
+let tail1 = List.tl blist
+let bod2 = List.hd tail1
+let tail2 = List.tl tail1
+let expect1 = List.hd tail2
+
 let gravity_tests =
   [
     ("cube root" >:: fun t -> assert_equal 5.0 (cbrt 125.0));
@@ -44,6 +55,20 @@ let gravity_tests =
     );
     ( "Move one step y pos" >:: fun t ->
       assert_equal 17.9999994 (y_pos (move tsys bod)) );
+    ( "X position check" >:: fun t ->
+      assert_equal (x_pos expect1) (x_pos (collide bod1 bod2)) );
+    ( "Y position check" >:: fun t ->
+      assert_equal (y_pos expect1) (y_pos (collide bod1 bod2)) );
+    ( "X velocity check" >:: fun t ->
+      assert_equal (x_vel expect1) (x_vel (collide bod1 bod2)) );
+    ( "Y velocity check" >:: fun t ->
+      assert_equal (y_vel expect1) (y_vel (collide bod1 bod2)) );
+    ( "Mass check" >:: fun t ->
+      assert_equal (mass expect1) (mass (collide bod1 bod2)) );
+    ( "Color check" >:: fun t ->
+      assert_equal (color expect1) (color (collide bod1 bod2)) );
+    ( "Radius check" >:: fun t ->
+      assert_equal (cbrt 2000.0) (rad (collide bod1 bod2)) );
   ]
 
 let suite =
