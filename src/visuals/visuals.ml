@@ -36,7 +36,8 @@ let rec draw_bodies camera clear = function
         Camera.to_window camera (Gravity.x_pos h) (Gravity.y_pos h)
       with
       | x, y ->
-          fill_circle x y (int_of_float (Gravity.rad h));
+          fill_circle x y
+            (Camera.to_window_scale camera (Gravity.rad h));
           draw_bodies camera clear t)
 
 let rec draw_paths camera clear paths =
@@ -87,7 +88,7 @@ let adjust
     (camera : Camera.t)
     (system : Gravity.system)
     (status : Status.t) : Camera.t =
-  match Status.camera_focus status with
+  (match Status.camera_focus status with
   | Camera.Origin -> Camera.set_pos 0.0 0.0 camera
   | Camera.Body n ->
       let b = system |> Gravity.bods |> fun lst -> List.nth lst n in
@@ -120,7 +121,12 @@ let adjust
         if List.length b > 0 then by b /. m else by b
       in
       Camera.set_pos cx cy camera
-  | _ -> camera
+  | _ -> camera)
+  |> (if Status.key_state 'w' status = Pressed then Camera.zoom 0.8
+     else Fun.id)
+  |>
+  if Status.key_state 's' status = Pressed then Camera.zoom 1.25
+  else Fun.id
 
 let rec main_loop
     (camera : Camera.t)
