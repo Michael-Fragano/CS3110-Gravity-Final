@@ -35,6 +35,8 @@ let default () =
         ('p', Idle);
         ('d', Idle);
         ('q', Idle);
+        ('s', Idle);
+        ('w', Idle);
       ];
     (* we can add any number of other keys here ^ *)
     camera_focus = Origin;
