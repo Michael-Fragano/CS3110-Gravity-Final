@@ -8,13 +8,17 @@ let rec save system =
      name, it WILL be overwritten.";
   let sys_name = read_line () in
   if sys_name = "Q" || sys_name = "new" || sys_name = "edit" then (
-    print_endline "The system can't be named that!";
+    print_endline "The system can't be named that!\n";
     save system)
   else if String.trim sys_name = "" then (
-    print_endline "You need to put actual text to save it!";
+    print_endline "You need to put actual text to save it!\n";
     save system)
   else
-    Yojson.Basic.to_file
-      ("data/" ^ sys_name ^ ".json")
-      (Gravity.to_json system);
-  print_endline ("Saved file as " ^ sys_name ^ ".json")
+    try
+      Yojson.Basic.to_file
+        ("data/" ^ String.trim sys_name ^ ".json")
+        (Gravity.to_json system);
+      print_endline ("Saved file as " ^ String.trim sys_name ^ ".json")
+    with Failure str ->
+      print_endline "The system can't be named that!\n\n";
+      save system
