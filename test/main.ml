@@ -1,7 +1,7 @@
 open OUnit2
 open Final.Gravity
 
-(**We primarily tested the functions Gravity.ml to make sure they
+(**We primarily tested the functions of Gravity.ml to make sure they
    returned expected result, as ultimately all other parts of the
    program relied on this file to run. We used glass box testing, trying
    to test each path a function could take. Other functions in places
