@@ -128,6 +128,11 @@ choices for presets, so the full list can be found there, as well as here
 >
 >`moon`
 
+When you run a preset system, a window will pop up with the system running.
+To close the system, simply use the X at the top of the window. The prompt will
+again ask you to run a preset, so you can run another if you choose to, or you
+can exit the program by typing `Q`.
+
 Once the simulation is running the following buttons have these effects:
 
 Space Bar: Toggle through different views -your current focus will be typed in 
@@ -138,9 +143,6 @@ Click: play/pause the simulation
 `w`: Zoom out
 `s`: Zoom in 
 `q`: Quit the simulation
-
-
-Press the space bar to toggle through views, `<` and `>` to slow down or speed up the simulation, 
 
 To create a system from scratch, type `new`. You will then be prompted to input 
 how many seconds you want the steps of the simulation to be (smaller is more 
@@ -161,7 +163,7 @@ a json file. Just use the name to run your system whenever you like.
 
 Press `q` to quit the editor. 
 
-When you run a preset system, a window will pop up with the system running.
-To close the system, simply use the X at the top of the window. The prompt will
-again ask you to run a preset, so you can run another if you choose to, or you
-can exit the program by typing `Q`.
+If you want to edit a preset system, type `edit`, you will then be prompted
+to input the name of the system you wish to edit. Type that in to edit your
+desired system. 
+
