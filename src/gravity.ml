@@ -66,6 +66,33 @@ let from_json json =
     bodies = List.map body_json (to_list (member "bodies" json));
   }
 
+(** [from_position p] converts [p] into a [Yojson.Basic.t] *)
+let from_position ({ x; y } : position) : Yojson.Basic.t =
+  `List [ `Float x; `Float y ]
+
+(** [from_veloctiy p] converts [p] into a [Yojson.Basic.t] *)
+let from_veloctiy ({ x; y } : velocity) : Yojson.Basic.t =
+  `List [ `Float x; `Float y ]
+
+(** [from_body p] converts [p] into a [Yojson.Basic.t] *)
+let from_body ({ pos; vel; mass; color; radius; create } : body) :
+    Yojson.Basic.t =
+  `Assoc
+    [
+      ("position", from_position pos);
+      ("velocity", from_veloctiy vel);
+      ("mass", `Float mass);
+      ("color", `String (Printf.sprintf "0x%06X" color));
+    ]
+
+let to_json ({ dt; g; bodies } : system) : Yojson.Basic.t =
+  `Assoc
+    [
+      ("dt", `Float dt);
+      ("g", `Float g);
+      ("bodies", `List (List.map from_body bodies));
+    ]
+
 (**Functions for making systems and g_fields*)
 let make_g h v : g_field = { x = h; y = v }
 

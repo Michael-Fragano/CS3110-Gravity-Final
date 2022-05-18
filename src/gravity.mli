@@ -22,6 +22,9 @@ val from_json : Yojson.Basic.t -> system
 (** [from_json s] is the system that [s] represents. Requires: [s] is a
     valid JSON system representation*)
 
+val to_json : system -> Yojson.Basic.t
+(** to_json s] is the Yojson.Basic.t that represents [s] *)
+
 val make_g : float -> float -> g_field
 (** [make_g h v] creates a g_field from two floats [h](horizontal) and
     [v](vertical)*)
