@@ -140,8 +140,8 @@ Space Bar: Toggle through different views -your current focus will be typed in
 Click: play/pause the simulation
 `<`: Slow down the simulation
 `>`: Speed up the simulation
-`w`: Zoom out
-`s`: Zoom in 
+`s`: Zoom out
+`w`: Zoom in 
 `q`: Quit the simulation
 
 To create a system from scratch, type `new`. You will then be prompted to input 
