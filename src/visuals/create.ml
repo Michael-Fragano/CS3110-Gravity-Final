@@ -3,6 +3,7 @@ open Graphics
 open Status
 open Camera
 open Visuals
+open Save
 
 let init () =
   open_graph " 800x600";
@@ -99,6 +100,10 @@ let poll (status : Status.t) (system : Gravity.system) =
          s)
   |> Status.bind_key 'q' Pressed (fun _ ->
          raise @@ Graphics.Graphic_failure "Quit Window")
+  |> Status.bind_key 's' Pressed (fun s ->
+         Graphics.close_graph ();
+         Save.save system;
+         s)
   |> Status.bind_key 'd' Pressed Status.cdelete
   |> Status.bind_key 'd' Released Status.reset_cstate
 
@@ -130,6 +135,7 @@ let update_system system ostatus nstatus =
     Status.create_state ostatus = Location
     && Status.create_state nstatus = Size
   then
+    (**Set position of new body*)
     Gravity.make_s
       (Gravity.timestep system)
       (Gravity.g_const system)
@@ -141,6 +147,7 @@ let update_system system ostatus nstatus =
          0.0 0xFF0000 true
       :: Gravity.bods system)
   else if Status.create_state ostatus = Size then
+    (**Keep radius of any new body to be distance between the mouse and the body's position*)
     Gravity.make_s
       (Gravity.timestep system)
       (Gravity.g_const system)
@@ -157,6 +164,7 @@ let update_system system ostatus nstatus =
             0xFF0000 true
           :: cd)
   else if Status.create_state ostatus = Velocity then
+    (**Keep velocity of any new body to be the same as the direction and distance between the mouse and the body's position*)
     Gravity.make_s
       (Gravity.timestep system)
       (Gravity.g_const system)
@@ -172,6 +180,7 @@ let update_system system ostatus nstatus =
             (Gravity.mass b) 0xFF0000 true
           :: cd)
   else if Status.create_state nstatus = Location then
+    (**Make any new body become an old body*)
     Gravity.make_s
       (Gravity.timestep system)
       (Gravity.g_const system)
@@ -182,6 +191,7 @@ let update_system system ostatus nstatus =
             (Gravity.mass b) 0xFF0000 false
           :: cd)
   else if Status.create_state nstatus = Delete then
+    (**Remove any body that the mouse is over*)
     let rec nbods bods =
       match bods with
       | [] -> []

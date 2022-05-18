@@ -1,6 +1,16 @@
 open OUnit2
 open Final.Gravity
 
+(**We primarily tested the functions Gravity.ml to make sure they
+   returned expected result, as ultimately all other parts of the
+   program relied on this file to run. We used glass box testing, trying
+   to test each path a function could take. Other functions in places
+   such as visuals.ml and create.ml are not tested here as their outputs
+   are primarily graphical, so they can only really be tested by looking
+   at a running program rendering the graphics. For testing this, we
+   have several pre-written json files that help us determine if
+   anything is rendered improperly. *)
+
 (** test_system.json*)
 let tst = Yojson.Basic.from_file "data/test_system.json"
 
@@ -43,7 +53,6 @@ let tail4 = List.tl tail3
 let bod4 = List.hd tail4
 let tail5 = List.tl tail4
 let expect2 = List.hd tail5
-
 
 let gravity_tests =
   [

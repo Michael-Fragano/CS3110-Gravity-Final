@@ -128,6 +128,39 @@ choices for presets, so the full list can be found there, as well as here
 >
 >`moon`
 
+Once the simulation is running the following buttons have these effects:
+
+Space Bar: Toggle through different views -your current focus will be typed in 
+           the bottom left corner.
+Click: play/pause the simulation
+`<`: Slow down the simulation
+`>`: Speed up the simulation
+`w`: Zoom out
+`s`: Zoom in 
+`q`: Quit the simulation
+
+
+Press the space bar to toggle through views, `<` and `>` to slow down or speed up the simulation, 
+
+To create a system from scratch, type `new`. You will then be prompted to input 
+how many seconds you want the steps of the simulation to be (smaller is more 
+accurate, we find 0.001 works well), and and what you want to set the 
+gravitational constant as (1000 usually works well). After this a window will 
+open. To create bodies, click once to set a postion, click again to set 
+radius/mass, then once more to set velocity. When setting radius, press the 
+space bar to skip velocity, setting it to the default of zero. 
+
+If you want to delete a body, place the mouse over the body you wish to delete,
+and press `d`
+
+Once you have created your bodies, press `k` to run a simulation. 
+
+If you want to save your system to run later, press `s`, and you will be 
+prompted to give a name to the system. Once you give this, it will be saved as 
+a json file. Just use the name to run your system whenever you like. 
+
+Press `q` to quit the editor. 
+
 When you run a preset system, a window will pop up with the system running.
 To close the system, simply use the X at the top of the window. The prompt will
 again ask you to run a preset, so you can run another if you choose to, or you
